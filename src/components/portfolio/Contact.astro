@@ -1,0 +1,45 @@
+---
+---
+
+<section id="contact" class="py-24 px-8 max-w-7xl mx-auto">
+  <div style="border-top: 1px solid #262626;" class="pt-12">
+
+    <div class="flex flex-col lg:flex-row gap-16">
+      <!-- Left label -->
+      <div class="lg:w-48 shrink-0">
+        <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Contact</p>
+      </div>
+
+      <!-- Right content -->
+      <div class="flex-1">
+        <p class="text-3xl md:text-4xl font-bold mb-10 leading-snug animate-in" style="color:#e8e8e8; --stagger: 0ms">
+          새로운 기회나 협업,<br />
+          단순한 인사도 환영합니다.
+        </p>
+
+        <a href="mailto:12345ggh81@gmail.com"
+          class="inline-flex items-center gap-2 text-lg font-semibold mb-12 transition-colors animate-in"
+          style="color:#b5f23d; --stagger: 80ms"
+          onmouseover="this.style.color='#c8f55a'" onmouseout="this.style.color='#b5f23d'">
+          12345ggh81@gmail.com ↗
+        </a>
+
+        <div class="flex flex-wrap gap-6 pt-8 animate-in" style="border-top: 1px solid #1e1e1e; --stagger: 160ms">
+          {[
+            { label: 'GitHub', href: 'https://github.com/GSMYunsung' },
+            { label: 'Tistory', href: 'https://nosecanceling.tistory.com/' },
+            { label: 'Velog', href: 'https://velog.io/@yunsung_/posts' },
+          ].map((link) => (
+            <a href={link.href} target="_blank" rel="noopener"
+              class="text-base transition-colors"
+              style="color:#555555;"
+              onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+              {link.label} ↗
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

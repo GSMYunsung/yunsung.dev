@@ -1,0 +1,202 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  headings?: MarkdownHeading[];
+}
+
+const { post, headings = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, category, tags } = post.data;
+
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+  year: 'numeric', month: 'long', day: 'numeric',
+}).format(pubDate);
+
+const catStyle: Record<string, string> = {
+  Frontend: 'color:#60a5fa; background:#0d1f33; border:1px solid #1a3a5c;',
+  Backend:  'color:#4ade80; background:#0d2218; border:1px solid #1a3d26;',
+  DevOps:   'color:#fb923c; background:#281a0a; border:1px solid #4a2e0e;',
+  AI:       'color:#22d3ee; background:#071e26; border:1px solid #0e3440;',
+  생산성:   'color:#a78bfa; background:#17122e; border:1px solid #2e1f5e;',
+  기타:     'color:#94a3b8; background:#1a1a1a; border:1px solid #2a2a2a;',
+};
+
+const formattedUpdated = updatedDate
+  ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }).format(updatedDate)
+  : null;
+---
+
+<BaseLayout title={`${title} — 최윤성`} description={description}>
+  <article class="py-24 px-8 max-w-7xl mx-auto">
+    <div style="border-top: 1px solid #262626;" class="pt-12">
+      <div class="flex flex-col lg:flex-row gap-12 xl:gap-16">
+
+        <!-- Left: meta -->
+        <div class="lg:w-44 xl:w-48 shrink-0">
+          <a
+            href="/blog"
+            class="text-xs tracking-widest uppercase transition-colors"
+            style="color:#b5f23d;"
+            onmouseover="this.style.color='#c8f55a'"
+            onmouseout="this.style.color='#b5f23d'"
+          >
+            ← Blog
+          </a>
+
+          <div class="mt-8 flex flex-col gap-5">
+            <div>
+              <p class="text-xs mb-1" style="color:#555555;">카테고리</p>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-full" style={catStyle[category] ?? catStyle['기타']}>{category}</span>
+            </div>
+            <div>
+              <p class="text-xs mb-1" style="color:#555555;">작성일</p>
+              <time class="text-xs" style="color:#888888;">{formattedDate}</time>
+            </div>
+            {formattedUpdated && (
+              <div>
+                <p class="text-xs mb-1" style="color:#555555;">수정일</p>
+                <time class="text-xs" style="color:#888888;">{formattedUpdated}</time>
+              </div>
+            )}
+            {tags.length > 0 && (
+              <div>
+                <p class="text-xs mb-2" style="color:#555555;">태그</p>
+                <div class="flex flex-col gap-1.5">
+                  {tags.map((tag) => (
+                    <span class="text-xs" style="color:#444444;">#{tag}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <!-- Center: content -->
+        <div class="flex-1 min-w-0">
+          <h1 class="text-3xl font-bold leading-tight mb-3" style="color:#e8e8e8; text-wrap:balance;">{title}</h1>
+          <p class="text-base mb-10 leading-relaxed" style="color:#666666;">{description}</p>
+
+          <!-- Mobile TOC -->
+          {tocHeadings.length > 0 && (
+            <details class="lg:hidden mb-10 rounded" style="background:#161616; border:1px solid #262626; padding:1rem;">
+              <summary class="text-xs tracking-widest uppercase cursor-pointer select-none" style="color:#b5f23d;">목차</summary>
+              <nav class="mt-4 flex flex-col gap-1.5">
+                {tocHeadings.map((h) => (
+                  <a
+                    href={`#${h.slug}`}
+                    class="toc-link-mobile text-sm transition-colors"
+                    style={`color:#666666; ${h.depth === 3 ? 'padding-left:1rem;' : ''}`}
+                  >
+                    {h.text}
+                  </a>
+                ))}
+              </nav>
+            </details>
+          )}
+
+          <div class="prose-custom">
+            <slot />
+          </div>
+
+          <div class="mt-16 pt-8" style="border-top:1px solid #1e1e1e;">
+            <a
+              href="/blog"
+              class="inline-flex items-center gap-2 text-sm transition-colors"
+              style="color:#666666;"
+              onmouseover="this.style.color='#b5f23d'"
+              onmouseout="this.style.color='#666666'"
+            >
+              ← 블로그 목록으로
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: sticky TOC (desktop only) -->
+        {tocHeadings.length > 0 && (
+          <div class="hidden lg:block lg:w-44 xl:w-48 shrink-0">
+            <nav id="toc" style="position:sticky; top:6rem;">
+              <p class="text-xs tracking-widest uppercase mb-4" style="color:#555555;">목차</p>
+              <div class="flex flex-col gap-1" id="toc-list">
+                {tocHeadings.map((h) => (
+                  <a
+                    href={`#${h.slug}`}
+                    data-slug={h.slug}
+                    class="toc-link text-xs leading-relaxed transition-colors"
+                    style={`color:#444444; display:block; ${h.depth === 3 ? 'padding-left:0.75rem;' : ''}`}
+                  >
+                    {h.text}
+                  </a>
+                ))}
+              </div>
+            </nav>
+          </div>
+        )}
+
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+  const tocMobileLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link-mobile');
+
+  if (tocLinks.length > 0) {
+    const headingEls = Array.from(tocLinks).map((link) => {
+      return document.getElementById(link.dataset.slug ?? '');
+    }).filter(Boolean) as HTMLElement[];
+
+    function setActive(slug: string) {
+      tocLinks.forEach((link) => {
+        const isActive = link.dataset.slug === slug;
+        link.style.color = isActive ? '#b5f23d' : '#444444';
+        link.style.fontWeight = isActive ? '500' : '400';
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+            break;
+          }
+        }
+      },
+      { rootMargin: '-10% 0px -80% 0px', threshold: 0 }
+    );
+
+    headingEls.forEach((el) => observer.observe(el));
+
+    // Smooth scroll for mobile links
+    tocMobileLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href') ?? '');
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const details = link.closest('details');
+        if (details) details.removeAttribute('open');
+      });
+    });
+
+    // Smooth scroll for desktop links
+    tocLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href') ?? '');
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+</script>
+
+<style>
+  .toc-link:hover { color: #888888 !important; }
+  .toc-link-mobile:hover { color: #b5f23d !important; }
+  details summary::-webkit-details-marker { display: none; }
+</style>

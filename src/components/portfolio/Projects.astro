@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+const sorted = allProjects.sort((a, b) => a.data.order - b.data.order);
+
+const companyCategories = ['CNAI', '팀오투'];
+const sideProjects = sorted.filter((p) => !companyCategories.includes(p.data.category));
+---
+
+<section id="projects" class="py-24 px-8 max-w-7xl mx-auto">
+  <div style="border-top: 1px solid #262626;" class="pt-12">
+
+    <div class="flex flex-col lg:flex-row gap-16">
+      <div class="lg:w-48 shrink-0">
+        <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Projects</p>
+      </div>
+
+      <div class="flex-1">
+
+        <!-- 개인 프로젝트 -->
+        <div>
+          <div>
+            {sideProjects.map((project, i) => {
+              const { title, description, techStack, github, demo, period, featured } = project.data;
+              return (
+                <a href={`/projects/${project.id}`}
+                  class="project-row animate-in flex flex-col sm:flex-row gap-4 sm:gap-8 py-5 group block"
+                  style={`border-top: 1px solid #1e1e1e; --stagger: ${i * 60}ms`}>
+                  <div class="flex-1">
+                    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 mb-2">
+                      <div class="flex items-center gap-2">
+                        <p class="text-sm font-semibold transition-colors" style="color:#e8e8e8;">{title}</p>
+                        {featured && (
+                          <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded"
+                            style="background:#1e1e1e; color:#b5f23d;">Featured</span>
+                        )}
+                      </div>
+                      <p class="text-xs shrink-0" style="color:#555555;">{period}</p>
+                    </div>
+                    <p class="text-sm mb-3" style="color:#666666;">{description}</p>
+                    <div class="flex flex-wrap gap-1.5">
+                      {techStack.map((t) => (
+                        <span class="tag text-xs">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div class="flex sm:flex-col gap-4 sm:gap-2 items-start shrink-0">
+                    {github && (
+                      <span class="text-xs transition-colors"
+                        onclick={`event.preventDefault(); window.open('${github}', '_blank')`}
+                        style="color:#555555;">
+                        GitHub ↗
+                      </span>
+                    )}
+                    <span class="text-sm transition-colors opacity-0 group-hover:opacity-100" style="color:#b5f23d;">자세히 ↗</span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        <div class="mt-10">
+          <a href="https://github.com/GSMYunsung" target="_blank" rel="noopener"
+            class="text-sm transition-colors"
+            style="color:#555555;"
+            onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+            GitHub에서 더 보기 ↗
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .project-row { text-decoration: none; }
+  .project-row:hover { background: rgba(255,255,255,0.02); }
+</style>

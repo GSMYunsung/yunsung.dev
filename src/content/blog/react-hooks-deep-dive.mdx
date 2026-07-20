@@ -1,0 +1,90 @@
+---
+title: 'React Hooks 완전 정복 — useState부터 useReducer까지'
+description: 'React의 핵심 Hooks를 깊이 이해하고, 상황에 맞게 올바르게 사용하는 방법을 알아봅니다.'
+pubDate: 2024-05-20
+category: 'Frontend'
+tags: ['React', 'Hooks', 'JavaScript', '상태관리']
+featured: true
+---
+
+## React Hooks 개요
+
+React 16.8에 도입된 Hooks는 함수형 컴포넌트에서 상태와 생명주기 기능을 사용할 수 있게 해줍니다.
+
+## useState vs useReducer
+
+### useState — 단순한 상태에 적합
+
+```tsx
+const [count, setCount] = useState(0);
+
+// 업데이트
+setCount(prev => prev + 1);
+```
+
+### useReducer — 복잡한 상태 로직에 적합
+
+상태 전환 로직이 복잡하거나, 다음 상태가 이전 상태에 의존하는 경우 `useReducer`가 더 적합합니다.
+
+```tsx
+type Action =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'reset' };
+
+function reducer(state: number, action: Action): number {
+  switch (action.type) {
+    case 'increment': return state + 1;
+    case 'decrement': return state - 1;
+    case 'reset':     return 0;
+    default:          return state;
+  }
+}
+
+const [count, dispatch] = useReducer(reducer, 0);
+dispatch({ type: 'increment' });
+```
+
+## useCallback & useMemo
+
+렌더링 성능을 최적화하는 두 Hooks입니다.
+
+```tsx
+// 함수 메모이제이션
+const handleClick = useCallback(() => {
+  console.log('clicked', id);
+}, [id]);
+
+// 값 메모이제이션
+const expensiveValue = useMemo(() => {
+  return heavyComputation(data);
+}, [data]);
+```
+
+> **주의**: 모든 함수에 useCallback을 사용하는 것은 오히려 성능을 저하시킬 수 있습니다. 실제로 최적화가 필요한 경우에만 사용하세요.
+
+## 커스텀 Hooks
+
+반복되는 로직은 커스텀 Hook으로 분리하세요.
+
+```tsx
+function useFetch<T>(url: string) {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [url]);
+
+  return { data, loading, error };
+}
+```
+
+## 마치며
+
+Hooks는 React의 패러다임을 완전히 바꿔놓았습니다. 올바른 Hook을 적재적소에 사용하는 것이 좋은 React 코드의 핵심입니다.

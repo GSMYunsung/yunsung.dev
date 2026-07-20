@@ -1,0 +1,60 @@
+---
+title: 'Astro Content Collections로 블로그 자동화하기'
+description: 'Astro v2부터 도입된 Content Collections를 활용해 타입 안전한 블로그를 구축하는 방법을 알아봅니다.'
+pubDate: 2024-06-15
+category: 'Frontend'
+tags: ['Astro', 'TypeScript', 'Blog', 'SSG']
+featured: true
+---
+
+## Content Collections란?
+
+Astro의 Content Collections는 마크다운 파일들을 타입 안전하게 관리할 수 있는 기능입니다. `src/content/` 디렉토리에 컬렉션을 정의하고, Zod 스키마로 frontmatter를 검증할 수 있습니다.
+
+```typescript
+// src/content/config.ts
+import { defineCollection, z } from 'astro:content';
+
+const blog = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    category: z.enum(['Frontend', 'Backend', 'DevOps']),
+    tags: z.array(z.string()),
+  }),
+});
+
+export const collections = { blog };
+```
+
+## 왜 Content Collections를 써야 할까?
+
+### 1. 타입 안전성
+
+스키마를 정의하면 frontmatter 타입이 자동으로 추론됩니다. 잘못된 필드를 사용하면 빌드 타임에 에러가 발생해 런타임 버그를 예방할 수 있습니다.
+
+### 2. 자동 검증
+
+`z.coerce.date()`처럼 Zod의 강력한 검증 기능을 활용해 데이터 무결성을 보장합니다.
+
+### 3. 뛰어난 DX
+
+`getCollection()`, `getEntry()` 등의 헬퍼 함수로 컬렉션 데이터를 쉽게 가져올 수 있습니다.
+
+## 컬렉션 데이터 가져오기
+
+```astro
+---
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const sorted = posts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+```
+
+## 마치며
+
+Content Collections는 Astro 블로그를 구축할 때 필수적인 기능입니다. 타입 안전성과 자동 검증 덕분에 개발 경험이 크게 향상됩니다.

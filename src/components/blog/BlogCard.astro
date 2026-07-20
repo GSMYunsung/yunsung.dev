@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, category, tags, featured } = post.data;
+
+const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+}).format(pubDate);
+---
+
+<a
+  href={`/blog/${post.id}`}
+  class="blog-card group block py-5"
+  style="border-top: 1px solid #1e1e1e; text-decoration:none;"
+>
+  <div class="flex items-baseline justify-between gap-4 mb-1.5">
+    <div class="flex items-center gap-2">
+      <p class="text-sm font-semibold" style="color:#e8e8e8;">{title}</p>
+      {featured && (
+        <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded"
+          style="background:#1e1e1e; color:#b5f23d;">Featured</span>
+      )}
+    </div>
+    <p class="text-xs shrink-0" style="color:#555555;">{formattedDate}</p>
+  </div>
+  <p class="text-sm mb-2.5" style="color:#666666;">{description}</p>
+  <div class="flex flex-wrap gap-2 items-center">
+    <span class="tag text-xs">{category}</span>
+    {tags.slice(0, 3).map((tag) => (
+      <span class="text-xs" style="color:#444444;">#{tag}</span>
+    ))}
+  </div>
+</a>
+
+<style>
+  .blog-card:hover { background: rgba(255,255,255,0.02); }
+</style>

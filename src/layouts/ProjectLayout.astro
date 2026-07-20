@@ -1,0 +1,235 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, techStack, github, demo, period, category, role, team, tools } = project.data;
+---
+
+<BaseLayout title={`${title} — yunsung`} description={description}>
+  <article class="max-w-4xl mx-auto px-8 py-16">
+
+    <!-- Back -->
+    <a href="/#projects"
+      class="inline-flex items-center gap-2 text-sm mb-12 transition-colors"
+      style="color:#555555;"
+      onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Projects
+    </a>
+
+    <!-- Header -->
+    <header class="mb-16">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-xs font-bold tracking-widest uppercase px-2 py-0.5 rounded"
+          style="background:#1e1e1e; color:#b5f23d;">{category}</span>
+        <span class="text-xs" style="color:#555555;">{period}</span>
+      </div>
+
+      <h1 class="text-4xl md:text-5xl font-black leading-tight mb-4" style="color:#e8e8e8;">{title}</h1>
+      <p class="text-lg leading-relaxed max-w-2xl" style="color:#888888;">{description}</p>
+
+      <!-- Meta row -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-10 pt-8" style="border-top: 1px solid #222;">
+        {role && (
+          <div>
+            <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Role</p>
+            <p class="text-sm font-medium" style="color:#e8e8e8;">{role}</p>
+          </div>
+        )}
+        {team && (
+          <div>
+            <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Team</p>
+            <p class="text-sm font-medium" style="color:#e8e8e8;">{team}</p>
+          </div>
+        )}
+        <div>
+          <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Period</p>
+          <p class="text-sm font-medium" style="color:#e8e8e8;">{period}</p>
+        </div>
+        {(tools ?? techStack).length > 0 && (
+          <div>
+            <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Stack</p>
+            <p class="text-sm font-medium" style="color:#e8e8e8;">{(tools ?? techStack).join(', ')}</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Links -->
+      {(github || demo) && (
+        <div class="flex flex-wrap items-center gap-3 mt-6">
+          {demo && (
+            <a href={demo} target="_blank" rel="noopener"
+              class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full transition-all"
+              style="background:#b5f23d; color:#0f0f0f;"
+              onmouseover="this.style.background='#c8ff4d'; this.style.transform='translateY(-1px)'"
+              onmouseout="this.style.background='#b5f23d'; this.style.transform='translateY(0)'">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+              Live Demo
+            </a>
+          )}
+          {github && (
+            <a href={github} target="_blank" rel="noopener"
+              class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full transition-all"
+              style="border: 1px solid #2e2e2e; color:#888888;"
+              onmouseover="this.style.borderColor='#444'; this.style.color='#e8e8e8'"
+              onmouseout="this.style.borderColor='#2e2e2e'; this.style.color='#888888'">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+              GitHub
+            </a>
+          )}
+        </div>
+      )}
+    </header>
+
+    <!-- MDX content -->
+    <div class="project-content">
+      <slot />
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-24 pt-8" style="border-top: 1px solid #222;">
+      <a href="/#projects"
+        class="inline-flex items-center gap-2 text-sm transition-colors"
+        style="color:#555555;"
+        onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Projects로 돌아가기
+      </a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  /* Case study content styles */
+  .project-content :global(h2) {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #e8e8e8;
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid #222;
+  }
+
+  .project-content :global(h3) {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #e8e8e8;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-content :global(p) {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #888888;
+    margin-bottom: 1.25rem;
+  }
+
+  .project-content :global(strong) {
+    color: #e8e8e8;
+    font-weight: 600;
+  }
+
+  .project-content :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.25rem;
+  }
+
+  .project-content :global(ul li) {
+    color: #888888;
+    padding: 0.5rem 0;
+    padding-left: 1.25rem;
+    position: relative;
+    border-bottom: 1px solid #1a1a1a;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .project-content :global(ul li::before) {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #b5f23d;
+    font-size: 0.75rem;
+    top: 0.6rem;
+  }
+
+  .project-content :global(blockquote) {
+    border-left: 2px solid #b5f23d;
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: #161616;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .project-content :global(blockquote p) {
+    color: #cccccc;
+    font-style: normal;
+    margin: 0;
+  }
+
+  .project-content :global(code) {
+    background: #1e1e1e;
+    color: #b5f23d;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+
+  .project-content :global(pre) {
+    background: #161616;
+    border: 1px solid #262626;
+    border-radius: 8px;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .project-content :global(pre code) {
+    background: none;
+    color: #e8e8e8;
+    padding: 0;
+  }
+
+  .project-content :global(hr) {
+    border: none;
+    border-top: 1px solid #222;
+    margin: 3rem 0;
+  }
+
+  .project-content :global(img) {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #262626;
+    margin: 1.5rem 0;
+  }
+
+  /* Section label (callout) */
+  .project-content :global(.section-label) {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: #1e1e1e;
+    color: #b5f23d;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+  }
+</style>

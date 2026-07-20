@@ -1,0 +1,44 @@
+---
+title: 'Postman - version mismatch detected 오류 해결'
+description: '한동안 Postman을 사용하지 않다가 재실행 시 발생하는 version mismatch 오류 해결법'
+pubDate: 2022-04-21
+category: 'DevOps'
+tags: ['Postman', '개발환경', 'Mac', 'Windows']
+---
+
+한동안 Postman을 켜지 않다가 다시 실행했더니 다음 오류가 떴다.
+
+```
+Looks like you've used a newer version of the Postman app on this system.
+Please download the latest app and try again.
+```
+
+다른 사람들이 시간 낭비하지 않도록 해결 방법을 기록해둔다.
+
+## 해결 방법 (Mac)
+
+1. Finder에서 응용 프로그램 폴더로 이동
+2. **Postman 앱**을 휴지통으로 삭제
+3. [Postman 공식 사이트](https://www.postman.com/downloads/)에서 최신 버전 재설치
+
+## 해결 방법 (Windows)
+
+**1단계 — 앱 제거**
+
+제어판 → 프로그램 및 기능에서 Postman을 제거한다.
+
+**2단계 — Roaming 폴더 삭제**
+
+파일 탐색기 주소창에 `%appdata%`를 입력하면 Roaming 폴더로 이동한다.
+해당 폴더 안에 있는 **Postman** 폴더를 완전히 삭제한다.
+
+**3단계 — Local 폴더 삭제**
+
+파일 탐색기 주소창에 `%localappdata%`를 입력하면 Local 폴더로 이동한다.
+해당 폴더 안에 있는 **Postman** 폴더를 완전히 삭제한다.
+
+**4단계 — 재설치**
+
+[Postman 공식 사이트](https://www.postman.com/downloads/)에서 최신 버전을 다시 설치한다.
+
+> Roaming과 Local 양쪽 모두 삭제해야 오류가 해결된다. 하나만 지우면 여전히 같은 오류가 발생할 수 있다.

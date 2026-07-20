@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, category, tags } = post.data;
+
+const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+}).format(pubDate);
+---
+
+<a
+  href={`/blog/${post.id}`}
+  class="featured-card group block p-6"
+  style="background:#161616; border:1px solid #262626; border-radius:8px; text-decoration:none; transition:border-color 0.2s;"
+>
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded"
+      style="background:#1e1e1e; color:#b5f23d;">Featured</span>
+    <span class="tag text-xs">{category}</span>
+    <span class="text-xs ml-auto" style="color:#555555;">{formattedDate}</span>
+  </div>
+
+  <h2 class="text-base font-semibold mb-2 leading-snug" style="color:#e8e8e8;">{title}</h2>
+  <p class="text-sm leading-relaxed" style="color:#666666;">{description}</p>
+
+  <div class="flex items-center justify-between mt-4">
+    <div class="flex gap-2">
+      {tags.slice(0, 3).map((tag) => (
+        <span class="text-xs" style="color:#444444;">#{tag}</span>
+      ))}
+    </div>
+    <span class="text-sm opacity-0 group-hover:opacity-100 transition-opacity" style="color:#b5f23d;">읽기 →</span>
+  </div>
+</a>
+
+<style>
+  .featured-card:hover { border-color: #3a3a3a; }
+</style>

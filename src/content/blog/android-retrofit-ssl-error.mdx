@@ -1,0 +1,115 @@
+---
+title: '[Android] Retrofit - Trust anchor for certification path not found 에러 해결'
+description: 'Retrofit HTTP 통신 중 SSL 인증서 미존재로 발생하는 SSLHandshakeException 해결법'
+pubDate: 2022-06-07
+category: 'Backend'
+tags: ['Android', 'Retrofit', 'SSL', 'Kotlin']
+---
+
+Retrofit을 이용한 HTTP 통신 중 아래 오류가 발생할 수 있다.
+
+```
+javax.net.ssl.SSLHandshakeException: java.security.cert.CertPathValidatorException:
+Trust anchor for certification path not found
+```
+
+## 원인
+
+요청하는 웹사이트의 Certificate 인증서가 안드로이드 단말에 존재하지 않을 때 발생한다.
+
+## 해결 순서
+
+1. 요청하고자 하는 웹사이트의 인증서를 확인한다
+2. 인증서를 다운로드 받아 프로젝트에 추가한다
+3. OkHttpClient에 인증서를 포함한 Helper 클래스를 생성한다
+4. Retrofit 생성 시 해당 Client를 설정한다
+
+## 1단계 — 인증서 확인 및 다운로드
+
+크롬에서 API 주소를 열고 주소창 왼쪽 자물쇠 아이콘 → 인증서 정보를 확인한다.
+인증서 이름(예: `GlobalSign RSA OV SSL CA 2018`)을 확인한 후 해당 인증서를 다운로드한다.
+
+## 2단계 — 프로젝트에 인증서 추가
+
+`res/raw/` 폴더를 생성하고 다운로드한 인증서 파일을 넣는다.
+
+## 3단계 — SelfSigningHelper 클래스 작성
+
+```kotlin
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.OkHttpClient
+import java.io.IOException
+import java.io.InputStream
+import java.security.KeyManagementException
+import java.security.KeyStore
+import java.security.KeyStoreException
+import java.security.NoSuchAlgorithmException
+import java.security.cert.Certificate
+import java.security.cert.CertificateException
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
+import javax.inject.Inject
+import javax.inject.Singleton
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
+
+@Singleton
+class SelfSigningHelper @Inject constructor(
+    @ApplicationContext context: Context
+) {
+    lateinit var tmf: TrustManagerFactory
+    lateinit var sslContext: SSLContext
+
+    init {
+        val cf: CertificateFactory
+        val ca: Certificate
+        val caInput: InputStream
+
+        try {
+            cf = CertificateFactory.getInstance("X.509")
+            caInput = context.resources.openRawResource(R.raw.thawte_rsa_ca_2018)
+            ca = cf.generateCertificate(caInput)
+            println("ca = ${(ca as X509Certificate).subjectDN}")
+
+            val keyStoreType = KeyStore.getDefaultType()
+            val keyStore = KeyStore.getInstance(keyStoreType)
+            with(keyStore) {
+                load(null, null)
+                setCertificateEntry("ca", ca)
+            }
+
+            val tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm()
+            tmf = TrustManagerFactory.getInstance(tmfAlgorithm)
+            tmf.init(keyStore)
+
+            sslContext = SSLContext.getInstance("TLS")
+            sslContext.init(null, tmf.trustManagers, java.security.SecureRandom())
+
+            caInput.close()
+        } catch (e: KeyStoreException) {
+            e.printStackTrace()
+        } catch (e: CertificateException) {
+            e.printStackTrace()
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
+        } catch (e: KeyManagementException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    // DI를 사용하지 않을 경우 이 함수를 OkHttpClient에 사용
+    fun setSSLOkHttp(builder: OkHttpClient.Builder): OkHttpClient.Builder {
+        builder.sslSocketFactory(sslContext.socketFactory, tmf.trustManagers[0] as X509TrustManager)
+        return builder
+    }
+}
+```
+
+## 4단계 — Retrofit Module에 적용
+
+Hilt DI를 사용하는 경우 Retrofit 모듈에서 `SelfSigningHelper`를 주입받아 OkHttpClient에 설정한다.
+DI를 사용하지 않는다면 `setSSLOkHttp()` 함수를 직접 호출해 OkHttpClient.Builder에 적용하면 된다.

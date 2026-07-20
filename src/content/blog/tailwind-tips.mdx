@@ -1,0 +1,69 @@
+---
+title: 'Tailwind CSS 생산성을 높이는 팁 10가지'
+description: '매일 Tailwind를 사용하면서 발견한 유용한 패턴과 팁들을 공유합니다.'
+pubDate: 2024-04-10
+category: 'Frontend'
+tags: ['Tailwind CSS', 'CSS', 'DX', '생산성']
+---
+
+## 1. @apply로 컴포넌트 클래스 만들기
+
+반복되는 유틸리티 조합은 `@apply`로 추출하세요.
+
+```css
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5
+           bg-indigo-600 text-white rounded-xl font-medium
+           text-sm hover:bg-indigo-700 transition-colors;
+  }
+}
+```
+
+## 2. group & peer 활용
+
+```html
+<!-- group: 부모 hover 시 자식 스타일 변경 -->
+<div class="group">
+  <p class="group-hover:text-indigo-600">hover me</p>
+</div>
+
+<!-- peer: 형제 요소의 상태 기반 스타일 -->
+<input type="checkbox" class="peer hidden" />
+<label class="peer-checked:text-indigo-600">체크됨</label>
+```
+
+## 3. 커스텀 CSS 변수 활용 (v4)
+
+Tailwind v4에서는 CSS 변수로 테마를 설정합니다.
+
+```css
+@theme {
+  --color-brand: #6366f1;
+  --font-sans: 'Pretendard Variable', sans-serif;
+}
+```
+
+## 4. 반응형 변형 순서
+
+Mobile-first 접근법을 따라야 합니다.
+
+```html
+<div class="text-sm md:text-base lg:text-lg">
+  모바일 → 태블릿 → 데스크톱 순으로
+</div>
+```
+
+## 5. arbitrary values
+
+디자인 시스템을 벗어나는 값은 대괄호로 지정하세요.
+
+```html
+<div class="w-[342px] top-[117px] bg-[#1a1a2e]">
+  커스텀 값
+</div>
+```
+
+## 마치며
+
+Tailwind는 처음엔 낯설지만 익숙해지면 CSS 작업 속도가 극적으로 빨라집니다. 지속적으로 공식 문서를 참고하세요.

@@ -1,0 +1,456 @@
+---
+---
+
+<section
+  id="hero-section"
+  class="relative flex flex-col overflow-hidden"
+  style="min-height: calc(100vh - 3.5rem);"
+>
+  <!-- Physics canvas -->
+  <canvas
+    id="physics-canvas"
+    class="absolute inset-0 w-full h-full"
+    style="z-index: 1; pointer-events: none;"
+  ></canvas>
+
+  <!-- 콘텐츠 — 네비게이션과 동일한 max-w-7xl px-8 기준 -->
+  <div
+    class="relative flex-1 flex flex-col px-8 max-w-7xl mx-auto w-full"
+    style="z-index: 2; pointer-events: none;"
+  >
+    <!-- 히어로 텍스트: 나머지 공간에서 수직 중앙 -->
+    <div class="flex-1 flex flex-col justify-center pb-10">
+      <div class="flex items-start">
+        <!-- 왼쪽: 텍스트 (물리 경계 48%까지) -->
+        <div class="flex flex-col min-w-0" style="flex: 0 0 48%;">
+          <p class="text-xs tracking-widest uppercase mb-6" style="color:#b5f23d; letter-spacing:0.2em;">
+            Frontend Developer
+          </p>
+          <h1
+            id="hero-headline"
+            class="font-black leading-[1.15] tracking-tight mb-8 select-none"
+            style="font-size: clamp(3rem, 7vw, 6rem); color:#e8e8e8;"
+          >
+            일상의<br />
+            <span style="color:#b5f23d;">불편함을</span><br />
+            해결하는<br />
+            <span style="color:#b5f23d;">최윤성</span>입니다
+          </h1>
+          <p id="hero-subtitle" class="mb-2" style="color:#888888; font-size:1rem; line-height:1.8;">
+            프론트엔드 개발자 · 광주SW마이스터고 · CNAI · 팀오투
+          </p>
+          <p id="hero-context" class="mb-10" style="color:#b5f23d; font-size:0.875rem; line-height:1.6; min-height:1.4em; opacity:0; transition:opacity 0.2s ease;">
+          </p>
+          <div class="flex flex-wrap items-center gap-4" style="pointer-events: auto;">
+            <a href="#projects" class="btn-primary">프로젝트 보기</a>
+            <a href="#contact" class="btn-ghost">연락하기</a>
+          </div>
+        </div>
+
+        <!-- 오른쪽: 필터 (Frontend Developer와 동일선, 드롭 완료 후 등장) -->
+        <div
+          id="physics-filters"
+          class="flex flex-col gap-1.5 ml-auto"
+          style="pointer-events:auto; opacity:0; transition:opacity 0.7s ease;"
+        >
+          {[
+            { key: 'all',     label: '전체',    color: '#e8e8e8' },
+            { key: 'skill',   label: '기술',    color: '#b5f23d' },
+            { key: 'company', label: '경력',    color: '#60a5fa' },
+            { key: 'project', label: '프로젝트', color: '#f472b6' },
+            { key: 'value',   label: '가치관',  color: '#a78bfa' },
+          ].map((f) => (
+            <button
+              class="filter-btn"
+              data-filter={f.key}
+              data-color={f.color}
+              style={`border-color: ${f.color}44; color: ${f.color}88;`}
+            >
+              <span class="dot" style={`background: ${f.color};`}></span>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div
+    class="relative px-8 pb-10 max-w-7xl mx-auto w-full"
+    style="z-index: 2; pointer-events: none;"
+  >
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8"
+      style="border-top: 1px solid #222;"
+    >
+      <div class="flex items-center gap-6" style="pointer-events: auto;">
+        {[
+          { label: 'GitHub', href: 'https://github.com/GSMYunsung' },
+          { label: 'Tistory', href: 'https://nosecanceling.tistory.com/' },
+          { label: 'Velog', href: 'https://velog.io/@yunsung_/posts' },
+        ].map((link) => (
+          <a href={link.href} target="_blank" rel="noopener"
+            class="text-sm transition-colors" style="color:#555555;"
+            onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+            {link.label} ↗
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .filter-btn.active {
+    color: #0f0f0f !important;
+  }
+  .filter-btn .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  .filter-btn.active .dot { opacity: 1; }
+
+</style>
+
+<script>
+import Matter from 'matter-js';
+const { Engine, Bodies, Body, Composite, Bounds, Vertices } = Matter;
+
+// ── 데이터 ──────────────────────────────────────────────
+type Category = 'skill' | 'company' | 'project' | 'value';
+
+const ITEMS: { label: string; category: Category; link: string; context?: string }[] = [
+  // 기술 → #skills 섹션
+  { label: 'React',        category: 'skill', link: '#skills', context: 'CNAI·팀오투 실 서비스에서 주력으로 사용한 프레임워크' },
+  { label: 'TypeScript',   category: 'skill', link: '#skills', context: '타입으로 런타임 오류를 사전에 차단합니다' },
+  { label: 'React Native', category: 'skill', link: '#skills', context: '식단 관리 앱을 iOS·Android 동시 배포한 경험' },
+  { label: 'Remix',        category: 'skill', link: '#skills', context: '영양사 관리 웹을 처음부터 혼자 설계·구축했습니다' },
+  { label: 'Next.js',      category: 'skill', link: '#skills', context: 'CrossStitch 서비스의 기반 프레임워크' },
+  { label: 'Tailwind',     category: 'skill', link: '#skills', context: '이 포트폴리오를 포함한 대부분의 UI에 적용' },
+  { label: 'Jotai',        category: 'skill', link: '#skills', context: '식단 앱에서 복잡한 전역 상태를 원자 단위로 관리' },
+  { label: 'Redux',        category: 'skill', link: '#skills', context: '카모아 플랫폼의 전역 상태 관리에 활용' },
+  { label: 'Storybook',    category: 'skill', link: '#skills', context: '컴포넌트 단위 독립 개발·문서화로 QA 부담을 줄임' },
+  { label: 'Webpack5',     category: 'skill', link: '#skills', context: '카모아 빌드 환경 정비 및 번들 최적화' },
+  { label: 'jQuery',       category: 'skill', link: '#skills', context: '야구 플랫폼 레거시 코드베이스 운용 경험' },
+  // 경력 → #about 섹션
+  { label: 'CNAI',             category: 'company', link: '#about', context: '식단 앱·야구 플랫폼·키오스크, 다양한 AI 서비스를 개발했습니다' },
+  { label: '팀오투',           category: 'company', link: '#about', context: 'Vanilla JS → React 마이그레이션, 렌트카 플랫폼 유지보수' },
+  { label: '광주SW마이스터고', category: 'company', link: '#about', context: '소프트웨어 개발 전공, 해커톤·올림피아드 수상' },
+  // 프로젝트 → 개별 프로젝트 상세 페이지
+  { label: 'CrossStitch',   category: 'project', link: '/projects/cross-stitch',   context: '커밋할수록 픽셀이 채워지는 CHALLENGE 모드, readme-card SVG API 제공' },
+  { label: '카모아',        category: 'project', link: '/projects/teamo2-carmore', context: 'Vanilla JS 레거시를 React로 마이그레이션, Webpack5 빌드 환경 정비' },
+  { label: '식단 앱',       category: 'project', link: '/projects/cnai-diet-app',  context: 'React Native 앱 + Remix 관리 웹, 필터링 응답 5초 → 2.5초 단축' },
+  { label: '야구 플랫폼',   category: 'project', link: '/projects/cnai-baseball',  context: '추첨 명단 엑셀 자동화로 1~2일 작업을 1시간으로 단축' },
+  { label: '포트폴리오',    category: 'project', link: '/projects/portfolio-blog', context: 'Matter.js 물리 시뮬레이션과 Astro SSG로 직접 구현한 이 사이트' },
+  { label: '툰 노티파이어', category: 'project', link: '/projects/toon-notifier',  context: 'GitHub Actions로 1시간마다 인스타그램 새 화를 체크해 푸시 알림 전송' },
+  // 가치관
+  { label: '파고드는 끈기',  category: 'value', link: '#values', context: '재현 안 되는 버그도 원인을 찾을 때까지 놓지 않습니다' },
+  { label: '성장하는 코드',  category: 'value', link: '#values', context: '예전 코드를 다시 보며 지금이라면 어떻게 짤지 고민합니다' },
+  { label: '실행 · 자동화', category: 'value', link: '#values', context: '아이디어를 직접 서비스로 만들고, 반복 작업은 스크립트로 없앱니다' },
+];
+
+const STYLE: Record<Category, { color: string; radius: number; h: number }> = {
+  skill:   { color: '#b5f23d', radius: 17, h: 32 },
+  company: { color: '#60a5fa', radius:  5, h: 36 },
+  project: { color: '#f472b6', radius: 12, h: 34 },
+  value:   { color: '#a78bfa', radius: 14, h: 32 },
+};
+
+// ── 캔버스 / 엔진 ─────────────────────────────────────────
+const canvas  = document.getElementById('physics-canvas') as HTMLCanvasElement;
+const section = document.getElementById('hero-section')!;
+
+let W = section.offsetWidth;
+let H = section.offsetHeight;
+canvas.width  = W;
+canvas.height = H;
+
+// max-w-7xl(1280px) + px-8(32px) 기준으로 컨테이너 내부 경계 계산
+const PX8    = 32;
+const MAX_CW = 1280;
+function containerEdges() {
+  const cLeft  = Math.max(0, (W - MAX_CW) / 2);
+  const cRight = Math.min(W, cLeft + MAX_CW);
+  return { left: cLeft + PX8, right: cRight - PX8 };
+}
+
+// 히어로 텍스트 / 물리 영역 분리선 — 컨테이너 콘텐츠 폭의 48%
+const RIGHT_EDGE = () => {
+  const { left, right } = containerEdges();
+  return Math.round(left + (right - left) * 0.48);
+};
+
+const engine = Engine.create({ gravity: { x: 0, y: 1.8 } });
+
+const wallOpts = { isStatic: true, label: 'wall' };
+
+function makeWalls(w: number, h: number) {
+  const { right: cRight } = containerEdges();
+  return [
+    Bodies.rectangle(w / 2,            h - 100, w + 200, 20, wallOpts), // 캔버스 바닥
+    Bodies.rectangle(-30,              h / 2,   60, h * 2, wallOpts),
+    Bodies.rectangle(cRight + 30,      h / 2,   60, h * 2, wallOpts),   // 컨테이너 오른쪽 벽
+    Bodies.rectangle(RIGHT_EDGE() - 30, h / 2,  60, h * 2, wallOpts),   // 텍스트/물리 경계
+  ];
+}
+let walls = makeWalls(W, H);
+Composite.add(engine.world, walls);
+
+// ── 바디 생성 ─────────────────────────────────────────────
+const pillW = (label: string) => {
+  const hasKorean = /[가-힣]/.test(label);
+  return Math.max(label.length * (hasKorean ? 13 : 9) + 46, 62);
+};
+
+type PhysicsBody = Matter.Body & { _item: typeof ITEMS[0]; _visible: boolean };
+const bodies: PhysicsBody[] = [];
+
+ITEMS.forEach((item, i) => {
+  const s  = STYLE[item.category];
+  const bw = pillW(item.label);
+  setTimeout(() => {
+    const rx             = RIGHT_EDGE();
+    const { right: cR }  = containerEdges();
+    const x  = rx + 40 + Math.random() * Math.max(cR - rx - 80, 40);
+    const y  = -40 - Math.random() * 350;
+    const b  = Bodies.rectangle(x, y, bw, s.h, {
+      restitution: 0.3,
+      friction:    0.05,
+      frictionAir: 0.013,
+      angle: (Math.random() - 0.5) * 0.5,
+      chamfer: { radius: s.radius },
+    }) as PhysicsBody;
+    b._item    = item;
+    b._visible = true;
+    bodies.push(b);
+    Composite.add(engine.world, b);
+  }, i * 85);
+});
+
+// ── 필터 ─────────────────────────────────────────────────
+let activeFilter: string = 'all';
+
+const subEl = document.getElementById('hero-subtitle') as HTMLElement;
+const ctxEl = document.getElementById('hero-context') as HTMLElement;
+
+const FILTER_SUBTITLE: Record<string, string> = {
+  all:     '프론트엔드 개발자 · 광주SW마이스터고 · CNAI · 팀오투',
+  skill:   'React · TypeScript · React Native 로 문제를 풉니다',
+  company: 'CNAI · 팀오투에서 실 서비스의 불편함을 개선했습니다',
+  project: '직접 만든 서비스로 일상의 불편함을 없앴습니다',
+  value:   '끈기 · 성장 · 자동화 — 문제에 접근하는 방식입니다',
+};
+
+document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((btn) => {
+  const color = btn.dataset.color!;
+
+  // 전체 버튼 초기 active
+  if (btn.dataset.filter === 'all') {
+    btn.classList.add('active');
+    btn.style.background   = color;
+    btn.style.borderColor  = color;
+    btn.style.color        = '#0f0f0f';
+  }
+
+  btn.addEventListener('click', () => {
+    activeFilter = btn.dataset.filter!;
+
+    document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((b) => {
+      const c = b.dataset.color!;
+      b.classList.remove('active');
+      b.style.background  = 'transparent';
+      b.style.borderColor = c + '44';
+      b.style.color       = c + '88';
+    });
+    btn.classList.add('active');
+    btn.style.background  = color;
+    btn.style.borderColor = color;
+    btn.style.color       = '#0f0f0f';
+
+    // 바디 가시성 업데이트
+    for (const b of bodies) {
+      b._visible = activeFilter === 'all' || b._item.category === activeFilter;
+    }
+
+    // B: subtitle 교체
+    subEl.textContent = FILTER_SUBTITLE[activeFilter];
+    ctxEl.style.opacity = '0';
+  });
+});
+
+// 마지막 아이템 드롭 후 2초 뒤 필터 등장
+setTimeout(() => {
+  const el = document.getElementById('physics-filters') as HTMLElement;
+  if (el) el.style.opacity = '1';
+}, (ITEMS.length - 1) * 85 + 2000);
+
+// ── 드롭 감지 ─────────────────────────────────────────────
+
+// ── 커스텀 드래그 + 클릭 네비게이션 ──────────────────────
+let hovered: PhysicsBody | null = null;
+let grabbed: PhysicsBody | null = null;
+let grabOffset   = { x: 0, y: 0 };
+let prevPos      = { x: 0, y: 0 };
+let vel          = { x: 0, y: 0 };
+let mouseDownPos = { x: 0, y: 0 };
+let mouseDownAt  = 0;
+let didDrag      = false;
+
+function getPos(e: MouseEvent) {
+  const r = section.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+function navigate(link: string) {
+  if (link.startsWith('#')) {
+    document.querySelector(link)?.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    window.location.href = link;
+  }
+}
+
+section.addEventListener('mousedown', (e) => {
+  const p = getPos(e);
+  mouseDownPos = p;
+  mouseDownAt  = Date.now();
+  didDrag      = false;
+  if (p.x < RIGHT_EDGE()) return;
+  for (const b of [...bodies].reverse()) {
+    if (!b._visible) continue;
+    if (Bounds.contains(b.bounds, p) && Vertices.contains(b.vertices, p)) {
+      grabbed = b;
+      grabOffset = { x: b.position.x - p.x, y: b.position.y - p.y };
+      prevPos = p; vel = { x: 0, y: 0 };
+      break;
+    }
+  }
+});
+
+window.addEventListener('mousemove', (e) => {
+  const p = getPos(e);
+  if (grabbed) {
+    const dist = Math.hypot(p.x - mouseDownPos.x, p.y - mouseDownPos.y);
+    if (dist > 6) didDrag = true;
+    vel = { x: p.x - prevPos.x, y: p.y - prevPos.y };
+    prevPos = p;
+    Body.setPosition(grabbed, { x: p.x + grabOffset.x, y: p.y + grabOffset.y });
+    Body.setVelocity(grabbed, { x: 0, y: 0 });
+    section.style.cursor = 'grabbing';
+    return;
+  }
+  if (p.x >= RIGHT_EDGE()) {
+    hovered = bodies.find(b => b._visible &&
+      Bounds.contains(b.bounds, p) && Vertices.contains(b.vertices, p)) ?? null;
+    section.style.cursor = hovered ? 'pointer' : 'default';
+  } else {
+    hovered = null;
+    section.style.cursor = 'default';
+  }
+
+  // A: pill hover 시 context 표시
+  if (hovered && hovered._item.context) {
+    ctxEl.textContent = '→ ' + hovered._item.context;
+    ctxEl.style.opacity = '1';
+  } else {
+    ctxEl.style.opacity = '0';
+  }
+});
+
+window.addEventListener('mouseup', () => {
+  if (!grabbed) return;
+  const isClick = !didDrag && Date.now() - mouseDownAt < 300;
+  if (isClick) {
+    navigate(grabbed._item.link);
+  } else {
+    Body.setVelocity(grabbed, { x: vel.x * 2.5, y: vel.y * 2.5 });
+  }
+  grabbed = null;
+  section.style.cursor = 'default';
+});
+
+// ── 렌더 루프 ─────────────────────────────────────────────
+const ctx    = canvas.getContext('2d')!;
+let lastTime = 0;
+
+function tick(now: number) {
+  const delta = Math.min(now - lastTime, 32);
+  lastTime = now;
+  Engine.update(engine, delta || 16.67);
+  ctx.clearRect(0, 0, W, H);
+
+  for (const body of bodies) {
+    const { x, y } = body.position;
+    const item    = body._item;
+    const s       = STYLE[item.category];
+    const bw      = pillW(item.label);
+    const visible = body._visible;
+    const isGrab  = grabbed === body;
+    const isHover = hovered === body && !grabbed;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(body.angle);
+    ctx.globalAlpha = visible ? 1 : 0.07;
+
+    if (isGrab || isHover) { ctx.shadowColor = s.color; ctx.shadowBlur = isGrab ? 18 : 10; }
+
+    // 배경
+    ctx.beginPath();
+    ctx.roundRect(-bw / 2, -s.h / 2, bw, s.h, s.radius);
+    ctx.fillStyle = isGrab ? s.color + '30' : isHover ? s.color + '22' : s.color + '14';
+    ctx.fill();
+
+    // 테두리
+    ctx.beginPath();
+    ctx.roundRect(-bw / 2, -s.h / 2, bw, s.h, s.radius);
+    ctx.strokeStyle = (isGrab || isHover) ? s.color : s.color + '55';
+    ctx.lineWidth   = (isGrab || isHover) ? 1.5 : 1;
+    ctx.stroke();
+
+    // 텍스트
+    ctx.shadowBlur   = 0;
+    ctx.fillStyle    = visible ? (isGrab ? s.color : s.color + 'dd') : s.color;
+    ctx.font         = `${item.category === 'company' ? '700' : '600'} 12px "Pretendard Variable", system-ui, sans-serif`;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(item.label, 0, 0.5);
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  requestAnimationFrame(tick);
+}
+
+requestAnimationFrame(tick);
+
+// ── 리사이즈 ──────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  W = section.offsetWidth;
+  H = section.offsetHeight;
+  canvas.width  = W;
+  canvas.height = H;
+  for (const w of walls) Composite.remove(engine.world, w);
+  walls = makeWalls(W, H);
+  Composite.add(engine.world, walls);
+});
+</script>

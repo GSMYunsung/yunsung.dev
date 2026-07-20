@@ -1,0 +1,26 @@
+---
+title: 'Android Studio Push Failed'
+description: '오랜만에 프로젝트에 들어가 push를 시도했을 때 발생하는 인증 오류 해결법'
+pubDate: 2022-09-15
+category: 'DevOps'
+tags: ['Android', 'Git', 'Android Studio']
+---
+
+오랜만에 들어간 프로젝트에서 push하던 중 다음과 같은 오류가 발생했다.
+
+```
+Push Failed
+```
+
+## 원인
+
+push하려는 프로젝트의 GitHub Personal Access Token(key)이 만료되어 발생하는 오류다.
+
+## 해결 방법
+
+Android Studio Terminal을 열고 GitHub 계정 정보를 다시 입력한다.
+
+1. Username에 자신의 GitHub 이름을 입력
+2. Password에 만료된 key 대신 새로 발급한 **Personal Access Token**을 입력
+
+Personal Access Token은 GitHub → Settings → Developer settings → Personal access tokens에서 새로 발급할 수 있다.

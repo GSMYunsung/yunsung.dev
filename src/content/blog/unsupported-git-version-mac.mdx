@@ -1,0 +1,48 @@
+---
+title: 'Unsupported Git Version 2.15.0 — At least 2.17.0 is required (Mac)'
+description: 'Mac에서 Git 버전이 낮아 Clone이 안 될 때 Homebrew로 업그레이드하는 방법'
+pubDate: 2022-06-05
+category: 'DevOps'
+tags: ['Git', 'Mac', 'Homebrew']
+---
+
+예제 프로젝트를 Clone하려던 중 다음 오류가 발생했다.
+
+```
+Unsupported Git Version 2.15.0
+At least 2.17.0 is required
+```
+
+## 원인
+
+Mac 기본 설치된 Git 버전이 낮아서 발생하는 문제다.
+
+## 해결 방법
+
+현재 Git 버전을 확인한다.
+
+```bash
+git --version
+# git version 2.15.0
+```
+
+Homebrew로 최신 Git을 설치한다.
+
+```bash
+brew install git
+```
+
+설치 후 버전을 다시 확인한다.
+
+```bash
+git --version
+# git version 2.27.0
+```
+
+## 번외 — 설치 후에도 구버전이 잡히는 경우
+
+Homebrew로 설치했는데도 시스템이 기존 Git을 계속 참조하는 경우, 아래 명령으로 link를 새로 정의한다.
+
+```bash
+brew link --overwrite git
+```

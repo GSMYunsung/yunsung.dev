@@ -1,0 +1,49 @@
+---
+title: 'CrossStitch'
+description: 'GitHub 커밋 기록으로 20×20 픽셀 아트를 만들고 README 카드로 삽입할 수 있는 웹 서비스. CHALLENGE 모드에서는 실제 커밋 수만큼만 셀을 채울 수 있어 커밋 동기를 자극합니다.'
+techStack: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Firebase']
+github: 'https://github.com/GSMYunsung/cross-stitch'
+demo: 'https://www.gitcrossstitch.site'
+period: '2025'
+category: '사이드'
+role: '기획 · 디자인 · 개발 (1인)'
+tools: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Firebase Auth', 'Firestore', 'Firebase Storage', 'Vitest', 'GitHub Actions', 'Vercel']
+featured: true
+order: 4
+---
+
+## 만든 이유
+
+GitHub 프로필 README를 꾸미고 싶어도 마땅한 방법이 없었습니다. 잔디(contribution graph)는 이미 있지만 개성을 담기 어렵고, 외부 뱃지 서비스는 디자인이 획일적입니다. **"내 커밋으로 픽셀 아트를 그려서 README에 박으면 어떨까?"** 라는 아이디어에서 출발했습니다.
+
+## 주요 기능
+
+- **GitHub OAuth 로그인** — Firebase Auth + `httpOnly` 쿠키로 토큰을 안전하게 관리
+- **20×20 인터랙티브 픽셀 그리드** — 드래그로 여러 셀을 한 번에 색칠, 색상 피커 지원
+- **NORMAL 모드** — 제한 없이 자유롭게 20×20 그리드를 색칠할 수 있는 기본 모드
+- **CHALLENGE 모드** — 이번 달 실제 커밋 수만큼만 셀을 채울 수 있습니다. 커밋을 더 할수록 픽셀이 더 채워지는 구조로, 잔디를 심는 동기를 자극합니다. 매달 1일 크론 잡이 실행되어 전월 커밋 수 대비 초과된 셀을 자동으로 정리하고, 다음 달 목표치로 초기화됩니다
+- **픽셀 아트 템플릿** — 직접 그리기 어려운 경우 제공된 템플릿으로 빠르게 시작
+- **readme-card SVG API** — 픽셀 아트 + GitHub 통계(레포수·팔로워·PR·이슈)를 담은 SVG 카드를 API로 제공
+- **원클릭 README 삽입** — 완성 후 마크다운 코드를 클립보드에 복사, GitHub README에 바로 붙여넣기
+
+## 서비스 흐름
+
+GitHub 로그인 → 모드 선택 → 20×20 그리드에 색 칠하기 → 완성 버튼 → `html-to-image`로 PNG 변환 → Firebase Storage 업로드 → `/api/readme-card/{uid}` SVG API로 README에 삽입
+
+## 기술적 기여
+
+**httpOnly 쿠키 기반 토큰 관리**
+
+GitHub OAuth 토큰을 클라이언트에 노출하지 않기 위해 Next.js API Route에서 토큰을 수신한 뒤 **`httpOnly` 쿠키(24시간 만료)로만 저장**했습니다. XSS로 토큰이 탈취되는 경로를 차단하고, 이후 API 요청은 서버 사이드에서만 토큰을 읽어 GitHub API를 호출합니다.
+
+**CHALLENGE 모드 크론 잡 설계**
+
+매달 1일 GitHub Actions 크론 잡이 실행되어 **Firestore에 저장된 모든 CHALLENGE 모드 유저의 셀 수와 현재 커밋 수를 비교, 초과된 셀을 자동 제거**합니다. 단순 삭제가 아니라 그리드를 오른쪽 하단부터 순서대로 제거해 아트가 자연스럽게 줄어드는 UX를 구현했습니다. 크론 실행 후 유저가 다음에 접속하면 리셋 알림 모달이 표시됩니다.
+
+**readme-card SVG API**
+
+`/api/readme-card/[uid]`로 GET 요청이 오면 Firestore에서 그리드 데이터와 GitHub 통계를 조합해 **SVG를 서버사이드에서 즉시 생성**합니다. 별도 이미지 서버 없이 마크다운 `![](url)` 문법만으로 README에 삽입할 수 있고, 최대 1시간 캐시를 적용해 GitHub 서버 부하를 줄였습니다.
+
+**CI/CD 파이프라인 구축**
+
+`main` 브랜치는 Ruleset으로 직접 push를 차단했습니다. PR을 올리면 GitHub Actions가 **ESLint → TypeScript 타입 체크 → Vitest 단위 테스트** 순서로 실행되고, 통과 후 CodeRabbit이 자동 코드리뷰를 달아줍니다. CI 실패 시 PR에 에러 리포트가 자동 코멘트로 달려 원인을 빠르게 파악할 수 있습니다.

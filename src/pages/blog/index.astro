@@ -1,0 +1,168 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts.sort((a, b) => {
+  if (a.data.featured && !b.data.featured) return -1;
+  if (!a.data.featured && b.data.featured) return 1;
+  return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+});
+
+const categories = ['전체', 'Frontend', 'Backend', 'DevOps', 'AI', '생산성', '기타'] as const;
+
+const catStyle: Record<string, string> = {
+  Frontend: 'color:#60a5fa; background:#0d1f33; border:1px solid #1a3a5c;',
+  Backend:  'color:#4ade80; background:#0d2218; border:1px solid #1a3d26;',
+  DevOps:   'color:#fb923c; background:#281a0a; border:1px solid #4a2e0e;',
+  AI:       'color:#22d3ee; background:#071e26; border:1px solid #0e3440;',
+  생산성:   'color:#a78bfa; background:#17122e; border:1px solid #2e1f5e;',
+  기타:     'color:#94a3b8; background:#1a1a1a; border:1px solid #2a2a2a;',
+};
+---
+
+<BaseLayout
+  title="블로그 — 최윤성"
+  description="개발하면서 배운 것들을 기록합니다."
+>
+  <section class="py-24 px-8 max-w-7xl mx-auto">
+    <div style="border-top: 1px solid #262626;" class="pt-12">
+      <div class="flex flex-col lg:flex-row gap-16">
+
+        <div class="lg:w-48 shrink-0">
+          <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Blog</p>
+          <p class="mt-2 text-xs" style="color:#444444;">총 {posts.length}개의 글</p>
+        </div>
+
+        <div class="flex-1">
+
+          <!-- Search + Filter -->
+          <div class="flex flex-col sm:flex-row gap-3 mb-10 flex-wrap">
+            <div class="relative">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style="color:#555555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+              </svg>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="글 검색..."
+                style="padding-left:2rem; padding-right:1rem; padding-top:0.375rem; padding-bottom:0.375rem; font-size:0.8rem; border-radius:9999px; background:#161616; border:1px solid #262626; color:#e8e8e8; outline:none; width:180px;"
+              />
+            </div>
+
+            <div class="flex gap-1.5 flex-wrap" id="category-tabs">
+              {categories.map((cat) => (
+                <button
+                  data-category={cat}
+                  class="category-tab px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                  style={cat === '전체'
+                    ? 'background:#b5f23d; color:#0f0f0f; border:none;'
+                    : 'background:#161616; color:#888888; border:1px solid #262626;'}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <!-- Post rows -->
+          <div id="posts-list">
+            {posts.map((post, i) => {
+              const { title, description, pubDate, category, tags, featured } = post.data;
+              const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+              }).format(pubDate);
+              return (
+                <a
+                  href={`/blog/${post.id}`}
+                  class="post-row animate-in flex flex-col sm:flex-row gap-2 sm:gap-8 py-5 group block"
+                  style={`border-top: 1px solid #1e1e1e; --stagger: ${Math.min(i, 8) * 50}ms; text-decoration:none;`}
+                  data-category={category}
+                  data-title={title.toLowerCase()}
+                  data-description={description.toLowerCase()}
+                  data-tags={tags.join(' ').toLowerCase()}
+                >
+                  <div class="flex-1">
+                    <div class="flex items-baseline justify-between gap-4 mb-1.5">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <p class="text-sm font-semibold" style="color:#e8e8e8;">{title}</p>
+                        {featured && (
+                          <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded"
+                            style="background:#1e1e1e; color:#b5f23d;">Featured</span>
+                        )}
+                      </div>
+                      <p class="text-xs shrink-0" style="color:#555555;">{formattedDate}</p>
+                    </div>
+                    <p class="text-sm mb-2.5" style="color:#666666;">{description}</p>
+                    <div class="flex flex-wrap gap-2 items-center">
+                      <span class="text-xs font-medium px-2 py-0.5 rounded-full" style={catStyle[category] ?? catStyle['기타']}>{category}</span>
+                      {tags.slice(0, 3).map((tag) => (
+                        <span class="text-xs" style="color:#444444;">#{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+
+          <!-- Empty state -->
+          <div id="empty-state" class="hidden py-20">
+            <p class="text-sm" style="color:#555555;">검색 결과가 없습니다</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.category-tab');
+  const rows = document.querySelectorAll<HTMLElement>('.post-row');
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const emptyState = document.getElementById('empty-state');
+
+  let activeCategory = '전체';
+  let searchQuery = '';
+
+  function filterPosts() {
+    let visible = 0;
+    rows.forEach((row) => {
+      const cat = row.dataset.category ?? '';
+      const title = row.dataset.title ?? '';
+      const desc = row.dataset.description ?? '';
+      const tags = row.dataset.tags ?? '';
+      const matchCat = activeCategory === '전체' || cat === activeCategory;
+      const matchSearch = searchQuery === '' || title.includes(searchQuery) || desc.includes(searchQuery) || tags.includes(searchQuery);
+      const show = matchCat && matchSearch;
+      row.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    emptyState?.classList.toggle('hidden', visible > 0);
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      activeCategory = tab.dataset.category ?? '전체';
+      tabs.forEach((t) => {
+        const isActive = t.dataset.category === activeCategory;
+        t.style.background = isActive ? '#b5f23d' : '#161616';
+        t.style.color = isActive ? '#0f0f0f' : '#888888';
+        t.style.border = isActive ? 'none' : '1px solid #262626';
+      });
+      filterPosts();
+    });
+  });
+
+  searchInput?.addEventListener('input', (e) => {
+    searchQuery = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    filterPosts();
+  });
+</script>
+
+<style>
+  .post-row:hover { background: rgba(255,255,255,0.02); }
+  #search-input::placeholder { color: #444444; }
+  #search-input:focus { border-color: #b5f23d !important; }
+</style>
