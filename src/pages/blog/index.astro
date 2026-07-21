@@ -25,13 +25,13 @@ const catStyle: Record<string, string> = {
   title="블로그 — 최윤성"
   description="개발하면서 배운 것들을 기록합니다."
 >
-  <section class="py-24 px-8 max-w-7xl mx-auto">
-    <div style="border-top: 1px solid #262626;" class="pt-12">
+  <section class="mt-24 pb-16 px-8 max-w-7xl mx-auto" style="border-top: 1px solid #262626;">
+    <div class="pt-12">
       <div class="flex flex-col lg:flex-row gap-16">
 
         <div class="lg:w-48 shrink-0">
           <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Blog</p>
-          <p class="mt-2 text-xs" style="color:#444444;">총 {posts.length}개의 글</p>
+          <p id="post-count" class="mt-2 text-xs" style="color:#444444;">총 {posts.length}개의 글</p>
         </div>
 
         <div class="flex-1">
@@ -65,9 +65,13 @@ const catStyle: Record<string, string> = {
             </div>
           </div>
 
-          <!-- Post rows -->
-          <div id="posts-list">
-            {posts.map((post, i) => {
+          <!--
+            5개 행 × ~128px = 640px 고정 높이.
+            숨겨진 행은 display:none이지만 컨테이너 높이가 고정되어
+            페이지가 바뀌어도 pagination 위치가 항상 동일.
+          -->
+          <div id="posts-list" style="height: 640px; overflow: hidden;">
+            {posts.map((post) => {
               const { title, description, pubDate, category, tags, featured } = post.data;
               const formattedDate = new Intl.DateTimeFormat('ko-KR', {
                 year: 'numeric', month: '2-digit', day: '2-digit',
@@ -75,8 +79,8 @@ const catStyle: Record<string, string> = {
               return (
                 <a
                   href={`/blog/${post.id}`}
-                  class="post-row animate-in flex flex-col sm:flex-row gap-2 sm:gap-8 py-5 group block"
-                  style={`border-top: 1px solid #1e1e1e; --stagger: ${Math.min(i, 8) * 50}ms; text-decoration:none;`}
+                  class="post-row flex flex-col sm:flex-row gap-2 sm:gap-8 py-5 group block"
+                  style="border-top: 1px solid #1e1e1e; text-decoration:none;"
                   data-category={category}
                   data-title={title.toLowerCase()}
                   data-description={description.toLowerCase()}
@@ -106,9 +110,18 @@ const catStyle: Record<string, string> = {
             })}
           </div>
 
-          <!-- Empty state -->
-          <div id="empty-state" class="hidden py-20">
+          <!-- Empty state: overlaps the fixed-height container when no results -->
+          <div id="empty-state" class="hidden" style="margin-top:-640px; padding-top:4rem;">
             <p class="text-sm" style="color:#555555;">검색 결과가 없습니다</p>
+          </div>
+
+          <!-- Pagination: in flow, always right below the 640px posts block -->
+          <div id="pagination" style="display:none; padding-top:6rem; justify-content:center;">
+            <div class="flex items-center gap-1" style="background:rgba(15,15,15,0.92); backdrop-filter:blur(12px); border:1px solid #2a2a2a; border-radius:9999px; padding:0.375rem 0.75rem;">
+              <button id="prev-btn" class="text-xs px-2.5 py-1.5 rounded-full transition-colors" style="color:#555555; cursor:pointer;">←</button>
+              <div id="page-numbers" class="flex gap-0.5"></div>
+              <button id="next-btn" class="text-xs px-2.5 py-1.5 rounded-full transition-colors" style="color:#555555; cursor:pointer;">→</button>
+            </div>
           </div>
 
         </div>
@@ -118,51 +131,116 @@ const catStyle: Record<string, string> = {
 </BaseLayout>
 
 <script>
-  const tabs = document.querySelectorAll<HTMLButtonElement>('.category-tab');
-  const rows = document.querySelectorAll<HTMLElement>('.post-row');
-  const searchInput = document.getElementById('search-input') as HTMLInputElement;
-  const emptyState = document.getElementById('empty-state');
-
+  const PAGE_SIZE = 5;
+  let currentPage = 1;
   let activeCategory = '전체';
   let searchQuery = '';
 
-  function filterPosts() {
-    let visible = 0;
-    rows.forEach((row) => {
-      const cat = row.dataset.category ?? '';
-      const title = row.dataset.title ?? '';
-      const desc = row.dataset.description ?? '';
-      const tags = row.dataset.tags ?? '';
-      const matchCat = activeCategory === '전체' || cat === activeCategory;
-      const matchSearch = searchQuery === '' || title.includes(searchQuery) || desc.includes(searchQuery) || tags.includes(searchQuery);
-      const show = matchCat && matchSearch;
-      row.classList.toggle('hidden', !show);
-      if (show) visible++;
+  const tabs        = document.querySelectorAll<HTMLButtonElement>('.category-tab');
+  const rows        = Array.from(document.querySelectorAll<HTMLElement>('.post-row'));
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const emptyState  = document.getElementById('empty-state')!;
+  const pagination  = document.getElementById('pagination')!;
+  const prevBtn     = document.getElementById('prev-btn') as HTMLButtonElement;
+  const nextBtn     = document.getElementById('next-btn') as HTMLButtonElement;
+  const pageNumbers = document.getElementById('page-numbers')!;
+  const postCount   = document.getElementById('post-count')!;
+
+  function getMatching() {
+    return rows.filter(row => {
+      const matchCat = activeCategory === '전체' || row.dataset.category === activeCategory;
+      const matchSearch = searchQuery === ''
+        || (row.dataset.title ?? '').includes(searchQuery)
+        || (row.dataset.description ?? '').includes(searchQuery)
+        || (row.dataset.tags ?? '').includes(searchQuery);
+      return matchCat && matchSearch;
     });
-    emptyState?.classList.toggle('hidden', visible > 0);
   }
 
-  tabs.forEach((tab) => {
+  function render() {
+    const matching = getMatching();
+    const totalPages = Math.max(1, Math.ceil(matching.length / PAGE_SIZE));
+    currentPage = Math.min(currentPage, totalPages);
+
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const visible = new Set(matching.slice(start, start + PAGE_SIZE));
+
+    rows.forEach(row => row.classList.toggle('hidden', !visible.has(row)));
+
+    const isEmpty = matching.length === 0;
+    emptyState.classList.toggle('hidden', !isEmpty);
+
+    const showPager = !isEmpty && totalPages > 1;
+    pagination.style.display = showPager ? 'flex' : 'none';
+
+    postCount.textContent = isEmpty ? '0개의 글' : `${matching.length}개의 글`;
+
+    if (showPager) {
+      prevBtn.style.color  = currentPage <= 1 ? '#333333' : '#888888';
+      prevBtn.style.cursor = currentPage <= 1 ? 'default' : 'pointer';
+      nextBtn.style.color  = currentPage >= totalPages ? '#333333' : '#888888';
+      nextBtn.style.cursor = currentPage >= totalPages ? 'default' : 'pointer';
+
+      // 숫자 버튼 렌더링
+      pageNumbers.innerHTML = '';
+      for (let p = 1; p <= totalPages; p++) {
+        const btn = document.createElement('button');
+        btn.textContent = String(p);
+        btn.className = 'text-xs px-2.5 py-1.5 rounded transition-colors';
+        btn.style.cssText = p === currentPage
+          ? 'background:#b5f23d; color:#0f0f0f; font-weight:600; cursor:default;'
+          : 'color:#666666; cursor:pointer;';
+        btn.addEventListener('mouseover', () => {
+          if (p !== currentPage) btn.style.color = '#e8e8e8';
+        });
+        btn.addEventListener('mouseout', () => {
+          if (p !== currentPage) btn.style.color = '#666666';
+        });
+        btn.addEventListener('click', () => {
+          currentPage = p;
+          render();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        pageNumbers.appendChild(btn);
+      }
+    }
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (currentPage > 1) { currentPage--; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    const total = Math.ceil(getMatching().length / PAGE_SIZE);
+    if (currentPage < total) { currentPage++; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+
+  tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       activeCategory = tab.dataset.category ?? '전체';
-      tabs.forEach((t) => {
+      currentPage = 1;
+      tabs.forEach(t => {
         const isActive = t.dataset.category === activeCategory;
         t.style.background = isActive ? '#b5f23d' : '#161616';
-        t.style.color = isActive ? '#0f0f0f' : '#888888';
-        t.style.border = isActive ? 'none' : '1px solid #262626';
+        t.style.color      = isActive ? '#0f0f0f' : '#888888';
+        t.style.border     = isActive ? 'none'    : '1px solid #262626';
       });
-      filterPosts();
+      render();
     });
   });
 
-  searchInput?.addEventListener('input', (e) => {
+  searchInput?.addEventListener('input', e => {
     searchQuery = (e.target as HTMLInputElement).value.toLowerCase().trim();
-    filterPosts();
+    currentPage = 1;
+    render();
   });
+
+  render();
 </script>
 
 <style>
   .post-row:hover { background: rgba(255,255,255,0.02); }
   #search-input::placeholder { color: #444444; }
   #search-input:focus { border-color: #b5f23d !important; }
+  #prev-btn:hover, #next-btn:hover { color: #e8e8e8 !important; }
 </style>

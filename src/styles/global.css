@@ -22,6 +22,15 @@
     color: #e8e8e8;
     line-height: 1.7;
     @apply antialiased;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   ::selection {
