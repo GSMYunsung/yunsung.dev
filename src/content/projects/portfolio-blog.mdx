@@ -1,13 +1,106 @@
 ---
-title: '개인 포트폴리오 & 기술 블로그'
-description: 'Astro Content Collections를 활용해 구축한 개인 포트폴리오 및 기술 블로그 사이트입니다. 카테고리 필터, 검색, MDX 지원 등 블로그에 필요한 기능을 갖추고 있습니다.'
-techStack: ['Astro', 'TypeScript', 'Tailwind CSS', 'MDX']
-github: 'https://github.com/GSMYunsung/portfolio-blog'
-demo: 'https://yuncastlee.dev'
-period: '2024.06 — 현재'
-category: '사이드'
+title: "개인 포트폴리오 & 기술 블로그"
+description: "Astro SSG로 구축한 개인 포트폴리오 사이트. Matter.js 물리 시뮬레이션 Hero, Web Animations API 헤드라인 사이클링, MDX 기반 블로그, 클라이언트 사이드 페이지네이션을 포함합니다."
+techStack: ["Astro", "TypeScript", "Tailwind CSS", "MDX", "Matter.js"]
+github: "https://github.com/GSMYunsung/portfolio-blog"
+demo: "https://yuncastlee.dev"
+period: "2025 — 현재"
+category: "사이드"
+role: "기획 · 디자인 · 개발 (1인)"
+tools: ["Astro 5", "TypeScript", "Tailwind CSS v4", "MDX", "Matter.js"]
 featured: true
 order: 1
 ---
 
-개인 포트폴리오 + 기술 블로그를 Astro로 구축했습니다.
+## 만든 이유
+
+이력서에 쓰기엔 너무 길고, GitHub에 올리기엔 맥락이 빠지는 것들이 있었습니다. 왜 이 기술을 골랐는지, 막혔을 때 어떻게 풀었는지 같은 것들을 설명하고싶었습니다.
+
+그걸 정리할 공간이 필요해서 직접 만들었습니다. 포트폴리오 사이트 자체도 볼거리가 있어야 한다고 생각해서, 물리 시뮬레이션이나 애니메이션도 직접 구현해서 넣었습니다.
+
+## 페이지 구조
+
+**Hero** — 페이지 진입 시 Matter.js 물리 엔진이 실행되며 기술·경력·프로젝트·가치관 필(pill)이 중력에 따라 아래로 떨어져 쌓입니다. 필터 버튼으로 원하는 카테고리만 남길 수 있습니다. 헤드라인은 10초마다 3개 문구가 슬라이드 업 애니메이션으로 전환됩니다.
+
+**Values** — 개발자로서의 가치관 3가지를 서술형으로 정리한 섹션입니다.
+
+**Experience** — 경력·학력·수상·자격증을 타임라인 형식으로 정리했습니다. 각 프로젝트마다 주요 기여와 기술적 챌린지를 함께 서술합니다.
+
+**Projects** — MDX Content Collections로 관리되는 사이드 프로젝트 목록입니다. 각 프로젝트 클릭 시 세부 페이지로 이동합니다.
+
+**Skills** — 사용 기술을 Frontend / State & Tooling / Etc 그룹으로 분류했습니다.
+
+**Blog** — 카테고리 필터, 키워드 검색, 클라이언트 사이드 페이지네이션을 갖춘 기술 블로그입니다. 포스트는 MDX로 작성합니다.
+
+## 기술적 기여
+
+**Matter.js 물리 시뮬레이션 Hero**
+
+라이브러리를 별도로 번들하지 않고 Matter.js를 CDN 없이 직접 연동했습니다. 엔진은 `Runner` 없이 `requestAnimationFrame` 루프 안에서 `Engine.update()`를 수동으로 호출하는 구조를 택했습니다. 이렇게 하면 Canvas 렌더링과 물리 업데이트 타이밍을 직접 제어할 수 있고, 탭이 비활성화된 동안 물리 연산이 계속 누적되는 문제도 방지됩니다.
+
+필터 버튼을 누르면 활성 카테고리에 해당하는 필만 화면에 남기고 나머지는 페이드 아웃 처리합니다. 필의 위치는 물리 엔진이 실시간으로 관리하므로 필터 전환 시에도 나머지 필이 자연스럽게 재정렬됩니다.
+
+**Web Animations API 헤드라인 사이클링**
+
+Framer Motion이나 GSAP 없이 **Web Animations API**만으로 슬라이드 업 전환 애니메이션을 구현했습니다. `.hero-line { overflow: hidden }`으로 각 줄을 클리핑 마스크로 만들고, 내부 `span`이 `translateY(0%) → translateY(-110%)` → `translateY(110%) → translateY(0%)` 순서로 이동하는 커튼 효과입니다.
+
+3개 문구는 10초 인터벌로 순환하며, 퇴장은 45ms, 등장은 65ms 스태거를 줘서 각 줄이 순서대로 올라오는 리듬감을 만들었습니다. 폰트 크기가 크고 line-height가 1.15라 `overflow: hidden`이 글자 하단을 잘라내는 문제가 있었는데, `padding-bottom: 0.15em; margin-bottom: -0.15em`으로 클리핑 영역을 확장해 해결했습니다.
+
+**MDX Content Collections + SSG**
+
+블로그 포스트와 프로젝트 세부 페이지 모두 Astro Content Collections로 관리합니다. 빌드 타임에 모든 MDX 파일이 정적 HTML로 변환되어 런타임 서버가 필요 없습니다. `zod` 스키마로 프론트매터를 타입 검증해 잘못된 데이터가 빌드 단계에서 걸립니다.
+
+**클라이언트 사이드 페이지네이션 — 레이아웃 이동 없는 고정 높이 구조**
+
+블로그 목록에서 카테고리 필터나 검색어를 적용하면 페이지 리로드 없이 즉시 반영됩니다. 페이지당 5개 포스트를 보여주는데, 문제는 현재 페이지의 포스트 수가 5개 미만일 때 페이지네이션 버튼 위치가 올라오는 것이었습니다.
+
+`display: none`으로 숨긴 행이 플로우에서 빠지면서 컨테이너 높이가 줄어드는 게 원인이었습니다. `#posts-list`에 `height: 640px; overflow: hidden`을 고정값으로 주는 것으로 해결했습니다. 5개 행 × 약 128px = 640px이라, 포스트 수에 관계없이 컨테이너 높이가 항상 일정하고 페이지네이션 버튼 위치도 고정됩니다.
+
+<table style="width:100%; border-collapse:collapse; font-size:0.85rem; line-height:1.6; margin-top:1.5rem;">
+  <thead>
+    <tr style="border-bottom:2px solid #333;">
+      <th style="padding:0.6rem 1rem; text-align:left; color:#666; font-weight:600;">
+        구현
+      </th>
+      <th style="padding:0.6rem 1rem; text-align:left; color:#666; font-weight:600;">
+        방법
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:0.6rem 1rem; color:#e8e8e8; vertical-align:middle;">물리 시뮬레이션</td>
+      <td style="padding:0.6rem 1rem; color:#aaa; vertical-align:middle;">Matter.js + rAF 수동 루프, 필터별 페이드 인/아웃</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:0.6rem 1rem; color:#e8e8e8; vertical-align:middle;">헤드라인 애니메이션</td>
+      <td style="padding:0.6rem 1rem; color:#aaa; vertical-align:middle;">Web Animations API, overflow:hidden 마스크, 10초 인터벌 사이클</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:0.6rem 1rem; color:#e8e8e8; vertical-align:middle;">콘텐츠 관리</td>
+      <td style="padding:0.6rem 1rem; color:#aaa; vertical-align:middle;">Astro Content Collections + MDX, zod 스키마 검증</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:0.6rem 1rem; color:#e8e8e8; vertical-align:middle;">블로그 필터·검색</td>
+      <td style="padding:0.6rem 1rem; color:#aaa; vertical-align:middle;">클라이언트 사이드 JS, 페이지 리로드 없이 즉시 반영</td>
+    </tr>
+    <tr>
+      <td style="padding:0.6rem 1rem; color:#e8e8e8; vertical-align:middle;">페이지네이션 위치 고정</td>
+      <td style="padding:0.6rem 1rem; color:#aaa; vertical-align:middle;"><code style="font-size:0.8rem; background:#1e1e1e; padding:0.1em 0.4em; border-radius:4px;">height: 640px; overflow: hidden</code> 고정 컨테이너로 레이아웃 이동 방지</td>
+    </tr>
+  </tbody>
+</table>
+
+## 트러블슈팅
+
+### 물리 엔진 누적 문제
+
+Matter.js `Runner`를 쓰면 탭이 백그라운드로 가도 물리 연산이 계속 돌아, 탭으로 돌아왔을 때 필들이 이미 화면 밖으로 튀어나가 있는 문제가 있었습니다. `requestAnimationFrame` 루프로 전환해 `document.hidden` 상태일 때 업데이트를 건너뛰도록 처리했습니다.
+
+### 헤드라인 하단 클리핑
+
+`font-size: clamp(3rem, 7vw, 5rem)`에 `line-height: 1.15`를 조합하면 `overflow: hidden`이 디센더(g, y, 하 등)를 잘라냅니다. 각 `.hero-line`에 `padding-bottom: 0.15em; margin-bottom: -0.15em`을 추가해 클리핑 없이 여백을 확보했습니다.
+
+### 섹션 테두리 너비 불일치
+
+블로그 섹션의 `border-top`이 내부 `div`에 붙어 있어, `px-8` 패딩 안쪽에서 선이 시작돼 푸터 테두리보다 64px 짧게 보였습니다. `border-top`을 `<section>` 요소로 올리고 `pt-24` 대신 `mt-24`를 써서 너비를 맞췄습니다.
