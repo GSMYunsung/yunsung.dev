@@ -29,12 +29,11 @@
           <h1
             id="hero-headline"
             class="font-black leading-[1.15] tracking-tight mb-8 select-none"
-            style="font-size: clamp(3rem, 7vw, 6rem); color:#e8e8e8;"
+            style="font-size: clamp(3rem, 7vw, 5rem); color:#e8e8e8;"
           >
-            일상의<br />
-            <span style="color:#b5f23d;">불편함을</span><br />
-            해결하는<br />
-            <span style="color:#b5f23d;">최윤성</span>입니다
+            <div class="hero-line"><span class="hero-line-inner">문제를 발견하고</span></div>
+            <div class="hero-line"><span class="hero-line-inner" style="color:#b5f23d;">끝까지 만드는</span></div>
+            <div class="hero-line"><span class="hero-line-inner"><span style="color:#b5f23d;">최윤성</span>입니다</span></div>
           </h1>
           <p id="hero-subtitle" class="mb-2" style="color:#888888; font-size:1rem; line-height:1.8;">
             단순한 고민에 머물지 않고, 이를 발전시켜 실질적인 솔루션을 찾아내는 것에 가치를 둡니다.
@@ -102,6 +101,17 @@
 </section>
 
 <style>
+  /* 각 줄이 슬라이딩 텍스트를 가리는 마스크 역할 */
+  .hero-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.15em;  /* 글자 하단 클리핑 방지 */
+    margin-bottom: -0.15em;  /* 추가 패딩만큼 간격 보정 */
+  }
+  .hero-line-inner {
+    display: block;
+  }
+
   .filter-btn {
     display: inline-flex;
     align-items: center;
@@ -442,6 +452,79 @@ function tick(now: number) {
 }
 
 requestAnimationFrame(tick);
+
+// ── 헤드라인 텍스트 순환 ──────────────────────────────────
+const HEADLINE_PHRASES = [
+  [
+    { html: '문제를 발견하고',                         color: '#e8e8e8' },
+    { html: '끝까지 만드는',                           color: '#b5f23d' },
+    { html: '<span style="color:#b5f23d">최윤성</span>입니다', color: '#e8e8e8' },
+  ],
+  [
+    { html: '사소한 불편에서',                         color: '#e8e8e8' },
+    { html: '아이디어를 찾는',                         color: '#b5f23d' },
+    { html: '<span style="color:#b5f23d">최윤성</span>입니다', color: '#e8e8e8' },
+  ],
+  [
+    { html: '일상의 불편함을',                         color: '#e8e8e8' },
+    { html: '자동화로 해결하는',                       color: '#b5f23d' },
+    { html: '<span style="color:#b5f23d">최윤성</span>입니다', color: '#e8e8e8' },
+  ],
+];
+
+let hlIndex = 0;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// 페이지 로드 시 첫 문장 슬라이드인
+document.querySelectorAll<HTMLElement>('.hero-line-inner').forEach((span, i) => {
+  if (reduced) return;
+  span.animate(
+    [{ transform: 'translateY(110%)' }, { transform: 'translateY(0)' }],
+    { duration: 700, delay: 200 + i * 100, easing: 'cubic-bezier(0.23,1,0.32,1)', fill: 'backwards' }
+  );
+});
+
+async function switchHeadline(nextIndex: number) {
+  const spans = Array.from(document.querySelectorAll<HTMLElement>('.hero-line-inner'));
+  const next  = HEADLINE_PHRASES[nextIndex];
+
+  if (reduced) {
+    spans.forEach((span, i) => {
+      span.innerHTML   = next[i].html;
+      span.style.color = next[i].color;
+    });
+    return;
+  }
+
+  // 위로 밀려나가며 퇴장
+  await Promise.all(spans.map((span, i) => {
+    span.getAnimations().forEach(a => a.cancel());
+    return span.animate(
+      [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-110%)', opacity: 0 }],
+      { duration: 380, delay: i * 45, easing: 'cubic-bezier(0.55,0,1,0.45)', fill: 'forwards' }
+    ).finished;
+  }));
+
+  // 내용 교체
+  spans.forEach((span, i) => {
+    span.innerHTML   = next[i].html;
+    span.style.color = next[i].color;
+    span.getAnimations().forEach(a => a.cancel());
+  });
+
+  // 아래서 올라오며 등장
+  spans.forEach((span, i) => {
+    span.animate(
+      [{ transform: 'translateY(110%)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }],
+      { duration: 600, delay: i * 65, easing: 'cubic-bezier(0.23,1,0.32,1)', fill: 'forwards' }
+    );
+  });
+}
+
+setInterval(() => {
+  hlIndex = (hlIndex + 1) % HEADLINE_PHRASES.length;
+  switchHeadline(hlIndex);
+}, 10000);
 
 // ── 리사이즈 ──────────────────────────────────────────────
 window.addEventListener('resize', () => {
