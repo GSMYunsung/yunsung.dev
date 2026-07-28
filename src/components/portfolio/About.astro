@@ -135,7 +135,7 @@ const experiences = [
 ];
 ---
 
-<section id="values" class="py-24 px-8 max-w-7xl mx-auto">
+<section id="values" class="py-16 px-4 sm:px-8 max-w-7xl mx-auto">
   <div style="border-top: 1px solid #262626;" class="pt-12">
     <div class="flex flex-col lg:flex-row gap-16">
       <div class="lg:w-48 shrink-0">
@@ -162,7 +162,7 @@ const experiences = [
   </div>
 </section>
 
-<section id="about" class="py-24 px-8 max-w-7xl mx-auto">
+<section id="about" class="py-16 px-4 sm:px-8 max-w-7xl mx-auto">
   <div style="border-top: 1px solid #262626;" class="pt-12">
 
     <div class="flex flex-col lg:flex-row gap-16">
@@ -209,7 +209,7 @@ const experiences = [
 
                 <!-- Projects -->
                 <div class="space-y-10 sm:pl-[3.75rem]">
-                  {exp.projects.map((proj) => (
+                  {exp.projects.map((proj, pi) => (
                     <div>
                       <!-- Project title row -->
                       <div class="flex flex-wrap items-center gap-2 mb-3">
@@ -224,9 +224,6 @@ const experiences = [
                         </p>
                       </div>
 
-                      <!-- Description (blockquote) -->
-                      <div class="mb-4 pl-4 text-sm" style="border-left: 2px solid #2a2a2a; color:#666666; line-height:1.75;" set:html={proj.desc} />
-
                       <!-- Tech badges -->
                       <div class="flex flex-wrap gap-1.5 mb-5">
                         {proj.tech.map((t) => (
@@ -240,7 +237,7 @@ const experiences = [
                       </div>
 
                       <!-- Achievements -->
-                      <ul class="space-y-2.5 mb-6">
+                      <ul class="space-y-2.5 mb-5">
                         {proj.achievements.map((item) => (
                           <li class="flex gap-3 text-sm" style="color:#888888; line-height:1.7;">
                             <span style="color:#b5f23d; flex-shrink:0; margin-top:0.3rem; font-size:0.65rem;">▸</span>
@@ -249,15 +246,27 @@ const experiences = [
                         ))}
                       </ul>
 
-                      <!-- Technical contributions -->
+                      <!-- Technical contributions (accordion) -->
                       {proj.contributions && proj.contributions.length > 0 && (
-                        <div class="space-y-5">
-                          {proj.contributions.map((c) => (
-                            <div class="pl-4" style="border-left: 2px solid #222;">
-                              <p class="text-sm font-semibold mb-1.5" style="color:#c8c8c8;">{c.title}</p>
-                              <p class="text-sm" style="color:#666666; line-height:1.8;" set:html={c.body} />
-                            </div>
-                          ))}
+                        <div>
+                          <button
+                            class="contrib-toggle flex items-center gap-1.5 text-xs mb-4 transition-colors"
+                            data-target={`contrib-${i}-${pi}`}
+                            style="color:#888888; cursor:pointer; background:#161616; border:1px solid #2a2a2a; border-radius:9999px; padding:0.3rem 0.75rem; font-family:inherit;"
+                          >
+                            <svg class="chevron" width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition: transform 0.2s;">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            기술 상세 {proj.contributions.length}개
+                          </button>
+                          <div id={`contrib-${i}-${pi}`} class="contrib-panel space-y-5" style="display:none;">
+                            {proj.contributions.map((c) => (
+                              <div class="pl-4" style="border-left: 2px solid #222;">
+                                <p class="text-sm font-semibold mb-1.5" style="color:#c8c8c8;">{c.title}</p>
+                                <p class="text-sm" style="color:#666666; line-height:1.8;" set:html={c.body} />
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -320,3 +329,21 @@ const experiences = [
 
   </div>
 </section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.contrib-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(btn.dataset.target!);
+      if (!panel) return;
+      const isOpen = panel.style.display !== 'none';
+      panel.style.display = isOpen ? 'none' : 'block';
+      const chevron = btn.querySelector<SVGElement>('.chevron');
+      if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+      btn.style.color = isOpen ? '#555555' : '#b5f23d';
+    });
+  });
+</script>
+
+<style>
+  .contrib-toggle:hover { color: #888888 !important; }
+</style>

@@ -13,23 +13,23 @@
     style="z-index: 1; pointer-events: none;"
   ></canvas>
 
-  <!-- 콘텐츠 — 네비게이션과 동일한 max-w-7xl px-8 기준 -->
+  <!-- 콘텐츠 — 네비게이션과 동일한 max-w-7xl px-4 sm:px-8 기준 -->
   <div
-    class="relative flex-1 flex flex-col px-8 max-w-7xl mx-auto w-full"
+    class="relative flex-1 flex flex-col px-4 sm:px-8 max-w-7xl mx-auto w-full"
     style="z-index: 2; pointer-events: none;"
   >
     <!-- 히어로 텍스트: 나머지 공간에서 수직 중앙 -->
     <div class="flex-1 flex flex-col justify-center pb-10">
       <div class="flex items-start">
-        <!-- 왼쪽: 텍스트 (물리 경계 48%까지) -->
-        <div class="flex flex-col min-w-0" style="flex: 0 0 48%;">
+        <!-- 왼쪽: 텍스트 — 모바일 전체 폭, 데스크탑 48% -->
+        <div class="hero-text-col flex flex-col min-w-0">
           <p class="text-xs tracking-widest uppercase mb-6" style="color:#b5f23d; letter-spacing:0.2em;">
             Frontend Developer
           </p>
           <h1
             id="hero-headline"
             class="font-black leading-[1.15] tracking-tight mb-8 select-none"
-            style="font-size: clamp(3rem, 7vw, 5rem); color:#e8e8e8;"
+            style="font-size: clamp(2.5rem, 7vw, 5rem); color:#e8e8e8;"
           >
             <div class="hero-line"><span class="hero-line-inner">문제를 발견하고</span></div>
             <div class="hero-line"><span class="hero-line-inner" style="color:#b5f23d;">끝까지 만드는</span></div>
@@ -38,7 +38,7 @@
           <p id="hero-subtitle" class="mb-2" style="color:#888888; font-size:1rem; line-height:1.8;">
             단순한 고민에 머물지 않고, 이를 발전시켜 실질적인 솔루션을 찾아내는 것에 가치를 둡니다.
           </p>
-          <p id="hero-context" class="mb-10" style="color:#b5f23d; font-size:0.875rem; line-height:1.6; min-height:1.4em; opacity:0; transition:opacity 0.2s ease;">
+          <p id="hero-context" class="mb-10 hidden md:block" style="color:#b5f23d; font-size:0.875rem; line-height:1.6; min-height:1.4em; opacity:0; transition:opacity 0.2s ease;">
           </p>
           <div class="flex flex-wrap items-center gap-4" style="pointer-events: auto;">
             <a href="#projects" class="btn-primary">프로젝트 보기</a>
@@ -46,10 +46,10 @@
           </div>
         </div>
 
-        <!-- 오른쪽: 필터 (Frontend Developer와 동일선, 드롭 완료 후 등장) -->
+        <!-- 오른쪽: 필터 — 모바일에서 숨김 -->
         <div
           id="physics-filters"
-          class="flex flex-col gap-1.5 ml-auto"
+          class="hidden md:flex flex-col gap-1.5 ml-auto"
           style="pointer-events:auto; opacity:0; transition:opacity 0.7s ease;"
         >
           {[
@@ -76,7 +76,7 @@
 
   <!-- Bottom bar -->
   <div
-    class="relative px-8 pb-10 max-w-7xl mx-auto w-full"
+    class="relative px-4 sm:px-8 pb-10 max-w-7xl mx-auto w-full"
     style="z-index: 2; pointer-events: none;"
   >
     <div
@@ -139,11 +139,23 @@
   }
   .filter-btn.active .dot { opacity: 1; }
 
+  /* 모바일: 텍스트 전체 폭 */
+  .hero-text-col { width: 100%; }
+  @media (min-width: 768px) {
+    .hero-text-col { flex: 0 0 48%; width: auto; }
+  }
+
+  /* 모바일: 물리 캔버스 숨김 */
+  @media (max-width: 767px) {
+    #physics-canvas { display: none; }
+  }
 </style>
 
 <script>
 import Matter from 'matter-js';
 const { Engine, Bodies, Body, Composite, Bounds, Vertices } = Matter;
+
+if (window.innerWidth >= 768) {
 
 // ── 데이터 ──────────────────────────────────────────────
 type Category = 'skill' | 'company' | 'project' | 'value';
@@ -171,7 +183,7 @@ const ITEMS: { label: string; category: Category; link: string; context?: string
   { label: '식단 앱',       category: 'project', link: '/projects/cnai-diet-app',  context: 'React Native 앱 + Remix 관리 웹, 필터링 응답 5초 → 2.5초 단축' },
   { label: '야구 플랫폼',   category: 'project', link: '/projects/cnai-baseball',  context: '추첨 명단 엑셀 자동화로 1~2일 작업을 1시간으로 단축' },
   { label: '포트폴리오',    category: 'project', link: '/projects/portfolio-blog', context: 'Matter.js 물리 시뮬레이션과 Astro SSG로 직접 구현한 이 사이트' },
-  { label: '툰 노티파이어', category: 'project', link: '/projects/toon-notifier',  context: 'GitHub Actions로 1시간마다 인스타그램 새 화를 체크해 푸시 알림 전송' },
+  { label: 'Toonify',        category: 'project', link: '/projects/toon-notifier',  context: 'GitHub Actions로 1시간마다 인스타툰 새 화를 감지해 푸시 알림 전송' },
   // 가치관
   { label: '파고드는 끈기',  category: 'value', link: '#values', context: '재현 안 되는 버그도 원인을 찾을 때까지 놓지 않습니다' },
   { label: '성장하는 코드',  category: 'value', link: '#values', context: '예전 코드를 다시 보며 지금이라면 어떻게 짤지 고민합니다' },
@@ -536,4 +548,6 @@ window.addEventListener('resize', () => {
   walls = makeWalls(W, H);
   Composite.add(engine.world, walls);
 });
+
+} // end if desktop
 </script>
