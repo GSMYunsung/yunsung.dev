@@ -22,7 +22,7 @@ const sideProjects = sorted.filter((p) => !companyCategories.includes(p.data.cat
         <div>
           <div>
             {sideProjects.map((project, i) => {
-              const { title, description, techStack, github, demo, period, featured } = project.data;
+              const { title, why, description, techStack, github, demo, period, featured } = project.data;
               return (
                 <a href={`/projects/${project.id}`}
                   class="project-row animate-in flex flex-col sm:flex-row gap-4 sm:gap-8 py-5 group block"
@@ -38,6 +38,7 @@ const sideProjects = sorted.filter((p) => !companyCategories.includes(p.data.cat
                       </div>
                       <p class="text-xs shrink-0" style="color:#555555;">{period}</p>
                     </div>
+                    {why && <p class="text-sm mb-1 font-medium" style="color:#c8e88a;">{why}</p>}
                     <p class="text-sm mb-3" style="color:#666666;">{description}</p>
                     <div class="flex flex-wrap gap-1.5">
                       {techStack.map((t) => (
