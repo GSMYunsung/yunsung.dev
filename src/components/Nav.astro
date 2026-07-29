@@ -6,8 +6,8 @@ const links = [
   { href: '/#about', label: 'About' },
   { href: '/#experience', label: 'Experience' },
   { href: '/#projects', label: 'Projects' },
-  // { href: '/blog', label: 'Blog' },
   { href: '/#contact', label: 'Contact' },
+  { href: '/blog', label: 'Blog' },
 ];
 ---
 
@@ -32,16 +32,10 @@ const links = [
     </div>
 
     {isBlog ? (
-      <!-- Blog: 포트폴리오로 돌아가기 버튼 -->
-      <a
-        href="/"
-        class="blog-back-btn flex items-center gap-1.5 text-xs transition-all"
-        style="color:#666; border:1px solid #262626; border-radius:9999px; padding:0.3rem 0.85rem;"
-      >
-        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
-        포트폴리오
+      <!-- Blog: 포트폴리오 유도 링크 -->
+      <a href="/" class="portfolio-hint" style="text-decoration:none; position:relative; display:inline-block;">
+        <span class="hint-default">포트폴리오 바로가기 ↗</span>
+        <span class="hint-hover">저에 대해 궁금하신가요? ↗</span>
       </a>
     ) : (
       <>
@@ -49,13 +43,23 @@ const links = [
         <ul class="hidden md:flex items-center gap-1">
           {links.map((link) => (
             <li>
-              <a
-                href={link.href}
-                class="nav-link px-3 py-1.5 text-sm rounded transition-colors"
-                style="color:#888888;"
-              >
-                {link.label}
-              </a>
+              {link.label === 'Blog' ? (
+                <a
+                  href={link.href}
+                  class="blog-nav-btn px-3 py-1.5 text-sm rounded-full transition-all"
+                  style="color:#b5f23d; border:1px solid #b5f23d44;"
+                >
+                  {link.label} ↗
+                </a>
+              ) : (
+                <a
+                  href={link.href}
+                  class="nav-link px-3 py-1.5 text-sm rounded transition-colors"
+                  style="color:#888888;"
+                >
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
@@ -84,13 +88,23 @@ const links = [
       <ul class="flex flex-col gap-1 pt-3">
         {links.map((link) => (
           <li>
-            <a
-              href={link.href}
-              class="block px-3 py-2 text-sm rounded transition-colors"
-              style="color:#888888;"
-            >
-              {link.label}
-            </a>
+            {link.label === 'Blog' ? (
+              <a
+                href={link.href}
+                class="block px-3 py-2 text-sm rounded transition-colors"
+                style="color:#b5f23d;"
+              >
+                {link.label} ↗
+              </a>
+            ) : (
+              <a
+                href={link.href}
+                class="block px-3 py-2 text-sm rounded transition-colors"
+                style="color:#888888;"
+              >
+                {link.label}
+              </a>
+            )}
           </li>
         ))}
       </ul>
@@ -102,8 +116,57 @@ const links = [
 
 <style>
   .nav-link:hover { color: #e8e8e8 !important; }
+  .blog-nav-btn:hover { background: #b5f23d18; border-color: #b5f23d88 !important; }
   #nav.scrolled { border-bottom-color: #222 !important; }
-  .blog-back-btn:hover { color: #b5f23d !important; border-color: #b5f23d !important; }
+  @keyframes underline-sweep {
+    0%   { clip-path: inset(0 100% 0 0%); }
+    40%  { clip-path: inset(0 62%  0 0%); }
+    58%  { clip-path: inset(0 0%   0 0%); }
+    72%  { clip-path: inset(0 0%   0 0%); }
+    100% { clip-path: inset(0 0%   0 100%); }
+  }
+  .portfolio-hint { display: inline-block; }
+  .hint-default {
+    position: relative;
+    display: block;
+    font-size: 0.75rem;
+    color: #555;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .hint-default::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #b5f23d;
+    animation: underline-sweep 1.6s ease 1.2s both;
+  }
+  .hint-hover {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) scale(0.8);
+    white-space: nowrap;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #b5f23d;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+    letter-spacing: -0.01em;
+  }
+  .portfolio-hint:hover .hint-default {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  .portfolio-hint:hover .hint-hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.08);
+    text-shadow: 0 0 20px #b5f23d66;
+  }
 </style>
 
 <script>
