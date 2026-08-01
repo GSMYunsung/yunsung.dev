@@ -9,7 +9,7 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     heroImage: z.string().optional(),
-    category: z.enum(['Frontend', 'Backend', 'DevOps', '생산성', 'AI', '기타']),
+    category: z.enum(['Frontend', 'Backend', 'DevOps', '생산성', 'AI', '기타', 'Essay', 'Retrospective']),
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),

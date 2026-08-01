@@ -48,3 +48,27 @@ GitHub OAuth 토큰을 클라이언트에 노출하지 않기 위해 Next.js API
 **CI/CD 파이프라인 구축**
 
 `main` 브랜치는 Ruleset으로 직접 push를 차단했습니다. PR을 올리면 GitHub Actions가 **ESLint → TypeScript 타입 체크 → Vitest 단위 테스트** 순서로 실행되고, 통과 후 CodeRabbit이 자동 코드리뷰를 달아줍니다. CI 실패 시 PR에 에러 리포트가 자동 코멘트로 달려 원인을 빠르게 파악할 수 있습니다.
+
+## AI 협업 워크플로우
+
+Claude Code를 코드 생성 도구로만 쓰지 않고, 제약이 걸린 구조 안에서 운용했습니다.
+
+**CLAUDE.md로 행동 범위를 먼저 고정했습니다**
+
+프로젝트 루트에 CLAUDE.md를 두고 AI가 따라야 할 규칙을 명문화했습니다. `main` 직접 커밋 금지, `feat/` `fix/` `chore/` 브랜치 → PR → 머지 순서 준수, `npm run test` 범위 안에 테스트를 두면 CI에 자동 포함된다는 규칙이 핵심이었습니다. 절차를 AI가 알아서 처리하니, 저는 코드 내용에만 집중할 수 있었습니다.
+
+**AI가 만든 코드에서 버그를 두 개 직접 잡았습니다**
+
+`applyRandomRemovalCells`는 체크된 셀 중 일부를 랜덤으로 제거하는 함수입니다. AI가 작성한 코드는 `slice(0, removeCount)`였는데, 이건 제거할 셀이 아니라 남아야 할 셀을 반환하는 — 의도와 정반대로 동작하는 코드였습니다. CodeRabbit 리뷰와 함께 직접 읽으며 `slice(removeCount)`로 수정했습니다.
+
+`isHeaderVisible`은 AI가 반환 타입을 `boolean`으로 생성했지만, 이후 스코프에서 `user`가 null일 수 있다는 TypeScript 오류가 났습니다. `user is { uid: string }` 형태의 type predicate로 바꿔 TypeScript가 해당 블록 안에서 `user`를 non-null로 추론하도록 했습니다. 동작은 하더라도 타입 안전성을 보장하지 못하는 경우였습니다.
+
+**테스트 구조가 잘못됐다는 걸 알아채고 다시 짰습니다**
+
+초기 AI가 작성한 `homeLogic.test.ts`는 프로덕션 코드의 로직을 테스트 파일 안에 복사해두고 그걸 검증하는 방식이었습니다. `HomeContent.tsx`의 로직이 바뀌어도 테스트는 그냥 통과하는 구조, 즉 회귀를 잡지 못하는 테스트였습니다.
+
+`homeState.ts`를 별도 파일로 만들어 `deriveHomeState`와 `isHeaderVisible`을 순수 함수로 분리하고, `HomeContent.tsx` · `Header.tsx` · 테스트가 모두 이 파일을 참조하도록 단일 소스로 통일했습니다. 이후부터는 프로덕션 로직이 바뀌면 테스트가 반드시 깨지는 구조가 됐습니다.
+
+**CI/CD 오류는 표면이 아니라 원인부터 파악했습니다**
+
+GitHub Actions에서 Vercel 배포를 구성하던 중 `SyntaxError: "[SENSITIVE]" is not valid JSON` 오류가 났습니다. `vercel pull`이 민감한 환경변수를 실제 값 대신 `[SENSITIVE]`라는 문자열로 `.env`에 써버리고, 빌드 시 `JSON.parse("[SENSITIVE]")`가 실행되는 게 원인이었습니다. Vercel CLI의 동작 방식을 파악한 뒤, `FIREBASE_SERVICE_ACCOUNT_KEY`를 GitHub Secrets에 등록하고 `vercel build` 스텝의 `env:` 블록에서 직접 주입해 `[SENSITIVE]` 값을 덮어쓰도록 해결했습니다.
