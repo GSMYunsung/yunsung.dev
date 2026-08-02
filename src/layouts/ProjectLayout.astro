@@ -110,6 +110,37 @@ const { title, description, techStack, github, demo, period, category, role, tea
       </a>
     </div>
   </article>
+<script>
+  const content = document.querySelector('.project-content');
+  if (content) {
+    const headings = Array.from(content.querySelectorAll('h2'));
+    const tsHeading = headings.find(h => h.textContent?.trim() === '트러블슈팅');
+    if (tsHeading) {
+      const btn = document.createElement('button');
+      btn.className = 'ts-toggle';
+      btn.innerHTML = `트러블슈팅<span class="ts-chevron"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>`;
+
+      const body = document.createElement('div');
+      body.className = 'ts-body';
+
+      let next = tsHeading.nextSibling;
+      while (next) {
+        const sibling = next;
+        next = next.nextSibling;
+        if (sibling instanceof Element && sibling.tagName === 'H2') break;
+        body.appendChild(sibling);
+      }
+
+      tsHeading.replaceWith(btn, body);
+
+      btn.addEventListener('click', () => {
+        const isOpen = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        btn.classList.toggle('open', !isOpen);
+      });
+    }
+  }
+</script>
 </BaseLayout>
 
 <style>
@@ -217,6 +248,48 @@ const { title, description, techStack, github, demo, period, category, role, tea
     border-radius: 8px;
     border: 1px solid #262626;
     margin: 1.5rem 0;
+  }
+
+  /* 트러블슈팅 accordion */
+  .project-content :global(.ts-toggle) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #e8e8e8;
+    font-family: inherit;
+    letter-spacing: -0.02em;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid #222;
+    width: 100%;
+    text-align: left;
+  }
+  .project-content :global(.ts-chevron) {
+    color: #555;
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease, color 0.25s ease;
+    flex-shrink: 0;
+  }
+  .project-content :global(.ts-toggle.open .ts-chevron) {
+    transform: rotate(180deg);
+    color: #b5f23d;
+  }
+  .project-content :global(.ts-body) {
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    max-height: 0;
+    opacity: 0;
+  }
+  .project-content :global(.ts-body.open) {
+    max-height: 9999px;
+    opacity: 1;
   }
 
   /* Section label (callout) */
