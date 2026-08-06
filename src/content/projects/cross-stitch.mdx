@@ -11,6 +11,7 @@ role: '기획 · 디자인 · 개발 (1인)'
 tools: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Firebase Auth', 'Firestore', 'Firebase Storage', 'Vitest', 'GitHub Actions', 'Vercel']
 featured: true
 order: 4
+collapseDetails: true
 ---
 
 ## 만든 이유
@@ -26,6 +27,12 @@ GitHub 프로필 README를 꾸미고 싶어도 마땅한 방법이 없었습니�
 - **픽셀 아트 템플릿** — 직접 그리기 어려운 경우 제공된 템플릿으로 빠르게 시작
 - **readme-card SVG API** — 픽셀 아트 + GitHub 통계(레포수·팔로워·PR·이슈)를 담은 SVG 카드를 API로 제공
 - **원클릭 README 삽입** — 완성 후 마크다운 코드를 클립보드에 복사, GitHub README에 바로 붙여넣기
+
+## AI 협업
+
+**배경** Claude Code를 코드 생성 도구로만 쓰면 결과를 그대로 믿고 넘어가기 쉽습니다. 실제로 초기 버전에서 AI가 작성한 `applyRandomRemovalCells`는 `slice(0, removeCount)`로 제거할 셀이 아니라 남아야 할 셀을 반환하는, 의도와 정반대로 동작하는 코드였고, `homeLogic.test.ts`는 프로덕션 로직을 테스트 파일 안에 그대로 복사해 검증하는 구조라 `HomeContent.tsx`가 바뀌어도 항상 통과하는 — 회귀를 잡지 못하는 테스트였습니다.
+
+**행동 & 결과** 프로젝트 루트에 CLAUDE.md를 두고 `main` 직접 커밋 금지, `feat/`·`fix/`·`chore/` 브랜치 → PR → 머지 순서 준수 같은 AI의 행동 범위를 먼저 고정했습니다. 그 위에서 AI가 만든 코드는 CodeRabbit 리뷰와 함께 직접 읽으며 검증했고, `applyRandomRemovalCells`는 `slice(removeCount)`로, `isHeaderVisible`은 `user is { uid: string }` type predicate로 고쳐 TypeScript가 null 케이스를 추론하도록 했습니다. 테스트는 `homeState.ts`로 `deriveHomeState`·`isHeaderVisible`을 순수 함수로 분리해 `HomeContent.tsx`·`Header.tsx`·테스트가 모두 이 파일을 참조하는 단일 소스로 통일했고, 이후부터는 프로덕션 로직이 바뀌면 테스트가 반드시 깨지는 구조가 됐습니다.
 
 ## OAuth 토큰 XSS 탈취 경로 차단
 
@@ -52,18 +59,6 @@ GitHub 프로필 README를 꾸미고 싶어도 마땅한 방법이 없었습니�
 **행동 & 결과** `main` 브랜치를 Ruleset으로 직접 push 차단했습니다. PR을 올리면 GitHub Actions가 ESLint → TypeScript 타입 체크 → Vitest 단위 테스트 순서로 실행되고, 통과 후 CodeRabbit이 자동 코드리뷰를 추가합니다. CI 실패 시 PR에 에러 리포트가 자동 코멘트로 달려 원인을 빠르게 파악할 수 있습니다.
 
 ## 트러블슈팅
-
-### AI가 작성한 코드의 버그 2건 직접 수정
-
-`applyRandomRemovalCells`는 체크된 셀 중 일부를 랜덤으로 제거하는 함수입니다. AI가 작성한 코드는 `slice(0, removeCount)`였는데, 이건 제거할 셀이 아니라 남아야 할 셀을 반환하는 — 의도와 정반대로 동작하는 코드였습니다. CodeRabbit 리뷰와 함께 직접 읽으며 `slice(removeCount)`로 수정했습니다.
-
-`isHeaderVisible`은 AI가 반환 타입을 `boolean`으로 생성했지만, 이후 스코프에서 `user`가 null일 수 있다는 TypeScript 오류가 났습니다. `user is { uid: string }` 형태의 type predicate로 바꿔 TypeScript가 해당 블록 안에서 `user`를 non-null로 추론하도록 했습니다.
-
-### 회귀를 잡지 못하는 테스트 구조 재설계
-
-초기 AI가 작성한 `homeLogic.test.ts`는 프로덕션 코드의 로직을 테스트 파일 안에 복사해두고 그걸 검증하는 방식이었습니다. `HomeContent.tsx`의 로직이 바뀌어도 테스트는 그냥 통과하는 구조였습니다.
-
-`homeState.ts`를 별도 파일로 만들어 `deriveHomeState`와 `isHeaderVisible`을 순수 함수로 분리하고, `HomeContent.tsx` · `Header.tsx` · 테스트가 모두 이 파일을 참조하도록 단일 소스로 통일했습니다. 이후부터는 프로덕션 로직이 바뀌면 테스트가 반드시 깨지는 구조가 됐습니다.
 
 ### Vercel CI/CD — `[SENSITIVE]` 환경변수 오류
 

@@ -1,28 +1,6 @@
 ---
-const values = [
-  {
-    title: '끝까지 파고들어 원인을 잡습니다.',
-    items: [
-      '재현되지 않는 버그일수록 승부욕이 생깁니다. 로그를 뒤지고 커밋을 되짚으며, <strong style="color:#c8c8c8;font-weight:600;">근본 원인을 찾을 때까지 놓지 않는 끈기</strong>가 저의 무기입니다.',
-      '<strong style="color:#c8c8c8;font-weight:600;">\'일단 되니까 넘어가자\'</strong>를 경계합니다. 임시방편으로 덮은 코드는 미래의 비용이 된다고 생각해, 왜 이 문제가 생겼는지 이해하고 넘어갑니다.',
-    ],
-  },
-  {
-    title: '어제의 코드보다 나은 코드를 씁니다.',
-    items: [
-      '성장은 멈추면 도태되는 것이라 생각합니다. 새로운 패턴을 학습하고, 예전 코드를 다시 보며 \'지금이라면 이렇게 짰을 텐데\'를 되새깁니다.',
-      '리뷰 피드백과 제 실수를 기록으로 남깁니다. 같은 실수를 반복하지 않도록 <strong style="color:#c8c8c8;font-weight:600;">배운 것을 체화하는 데 집중</strong>합니다.',
-    ],
-  },
-  {
-    title: '반복은 자동화하고, 아이디어는 코드로 만듭니다.',
-    items: [
-      '좋은 생각도 실행되지 않으면 아이디어로 끝난다고 믿습니다. 머릿속 구상을 <strong style="color:#c8c8c8;font-weight:600;">직접 동작하는 서비스로 구현하고, 실제 사용자를 모아 세상에 내놓는 과정</strong>을 즐깁니다.',
-      '같은 작업을 세 번 반복하고 있다면 <strong style="color:#c8c8c8;font-weight:600;">자동화의 신호</strong>라 생각합니다. 손이 많이 가는 작업을 스크립트로 만들어 팀과 저의 시간을 아낍니다.',
-      '회의에서 나온 구상을 <strong style="color:#c8c8c8;font-weight:600;">바로 프로토타입으로 찍어보며</strong>, 팀이 눈으로 확인하고 논의할 수 있게 만듭니다.',
-    ],
-  },
-];
+const valuesParagraph =
+  '재현되지 않는 버그일수록 승부욕이 생깁니다. 로그를 뒤지고 커밋을 되짚으며 근본 원인을 찾을 때까지 놓지 않고, <strong style="color:#c8c8c8;font-weight:600;">\'일단 되니까\'를 경계</strong>합니다. 새로운 패턴을 익히고 예전 코드를 다시 보며 \'지금이라면 이렇게 짰을 텐데\'를 되새기는 것이 습관입니다. 같은 작업이 세 번 반복된다면 <strong style="color:#c8c8c8;font-weight:600;">자동화의 신호</strong>로 받아들이고, 머릿속 구상은 직접 <strong style="color:#c8c8c8;font-weight:600;">동작하는 서비스로 만들어 세상에 내놓는 쪽</strong>을 선택합니다.';
 
 const experiences = [
   {
@@ -104,22 +82,8 @@ const experiences = [
       <div class="lg:w-48 shrink-0">
         <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Values</p>
       </div>
-      <div class="flex-1 space-y-16">
-        {values.map((block, bi) => (
-          <div class="animate-in" style={`--stagger: ${bi * 80}ms`}>
-            <h2 class="font-black mb-8" style="font-size: clamp(1.5rem, 3vw, 2.25rem); color:#e8e8e8; letter-spacing:-0.02em; line-height:1.2;">
-              {block.title}
-            </h2>
-            <ul class="space-y-5">
-              {block.items.map((html) => (
-                <li class="flex gap-4" style="color:#888888; font-size:1rem; line-height:1.8;">
-                  <span style="color:#444; margin-top:0.1em; flex-shrink:0;">•</span>
-                  <p set:html={html} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <div class="flex-1">
+        <p class="text-base" style="color:#888888; line-height:1.9;" set:html={valuesParagraph} />
       </div>
     </div>
   </div>
@@ -136,16 +100,6 @@ const experiences = [
 
       <!-- Right content -->
       <div class="flex-1">
-
-        <!-- Story -->
-        <div class="mb-16 animate-in" style="--stagger: 0ms;">
-          <p class="text-base leading-relaxed mb-5" style="color:#888888; line-height:1.9;">
-            저는 "이 정도는 원래 참고 하는 거야"라는 말을 잘 못 견딥니다. 명단을 이틀씩 손으로 옮기는 것도, 납품마다 같은 화면을 처음부터 다시 만드는 것도, 인스타툰 새 화가 나왔는지 매번 확인하러 들어가는 것도 — 반복되는 불편을 마주하면 손이 근질거려 구조나 자동화로 바꿔버립니다. 회사 일이든 제 개인적인 귀찮음이든 똑같습니다.
-          </p>
-          <p class="text-base leading-relaxed" style="color:#888888; line-height:1.9;">
-            코딩할 때 항상 화면 너머의 사람을 먼저 떠올립니다. 이 버튼을 누를 사람이 어디서 헷갈릴지, 이 흐름이 처음 쓰는 사람에게도 자연스러울지 — 그걸 상상하고 나서야 키보드에 손이 갑니다. 잘 짠 코드보다 실제로 누군가의 불편이 하나 사라지는 쪽이 먼저라고 생각합니다.
-          </p>
-        </div>
 
         <!-- Experience -->
         <div class="mb-20">

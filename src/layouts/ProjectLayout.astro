@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, techStack, github, demo, period, category, role, team, tools } = project.data;
+const { title, description, techStack, github, demo, period, category, role, team, tools, collapseDetails } = project.data;
 ---
 
 <BaseLayout title={`${title} — yunsung`} description={description}>
@@ -99,7 +99,7 @@ const { title, description, techStack, github, demo, period, category, role, tea
     </header>
 
     <!-- MDX content -->
-    <div class="project-content">
+    <div class="project-content" data-collapse-details={collapseDetails ? 'true' : 'false'}>
       <slot />
     </div>
 
@@ -119,32 +119,39 @@ const { title, description, techStack, github, demo, period, category, role, tea
 <script>
   const content = document.querySelector('.project-content');
   if (content) {
+    const collapseAll = content.getAttribute('data-collapse-details') === 'true';
+    const alwaysOpen = ['만든 이유', '주요 기능', '개요'];
+    const defaultAccordionTitles = ['트러블슈팅'];
     const headings = Array.from(content.querySelectorAll('h2'));
-    const tsHeading = headings.find(h => h.textContent?.trim() === '트러블슈팅');
-    if (tsHeading) {
-      const btn = document.createElement('button');
-      btn.className = 'ts-toggle';
-      btn.innerHTML = `트러블슈팅<span class="ts-chevron"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>`;
+    headings
+      .filter(h => {
+        const text = h.textContent?.trim() ?? '';
+        return collapseAll ? !alwaysOpen.includes(text) : defaultAccordionTitles.includes(text);
+      })
+      .forEach(heading => {
+        const btn = document.createElement('button');
+        btn.className = 'ts-toggle';
+        btn.innerHTML = `${heading.textContent}<span class="ts-chevron"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>`;
 
-      const body = document.createElement('div');
-      body.className = 'ts-body';
+        const body = document.createElement('div');
+        body.className = 'ts-body';
 
-      let next = tsHeading.nextSibling;
-      while (next) {
-        const sibling = next;
-        next = next.nextSibling;
-        if (sibling instanceof Element && sibling.tagName === 'H2') break;
-        body.appendChild(sibling);
-      }
+        let next = heading.nextSibling;
+        while (next) {
+          const sibling = next;
+          next = next.nextSibling;
+          if (sibling instanceof Element && sibling.tagName === 'H2') break;
+          body.appendChild(sibling);
+        }
 
-      tsHeading.replaceWith(btn, body);
+        heading.replaceWith(btn, body);
 
-      btn.addEventListener('click', () => {
-        const isOpen = body.classList.contains('open');
-        body.classList.toggle('open', !isOpen);
-        btn.classList.toggle('open', !isOpen);
+        btn.addEventListener('click', () => {
+          const isOpen = body.classList.contains('open');
+          body.classList.toggle('open', !isOpen);
+          btn.classList.toggle('open', !isOpen);
+        });
       });
-    }
   }
 </script>
 </BaseLayout>
@@ -179,6 +186,43 @@ const { title, description, techStack, github, demo, period, category, role, tea
   .project-content :global(strong) {
     color: #e8e8e8;
     font-weight: 600;
+  }
+
+  .project-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.875rem;
+    border: 1px solid #262626;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .project-content :global(th) {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: #1a1a1a;
+    color: #b5f23d;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #262626;
+  }
+
+  .project-content :global(td) {
+    padding: 0.75rem 1rem;
+    color: #aaaaaa;
+    border-bottom: 1px solid #1a1a1a;
+    vertical-align: top;
+  }
+
+  .project-content :global(tr:last-child td) {
+    border-bottom: none;
+  }
+
+  .project-content :global(td:first-child) {
+    color: #888888;
   }
 
   .project-content :global(ul) {
