@@ -129,10 +129,6 @@ const { title, description, techStack, github, demo, period, category, role, tea
         return collapseAll ? !alwaysOpen.includes(text) : defaultAccordionTitles.includes(text);
       })
       .forEach(heading => {
-        const btn = document.createElement('button');
-        btn.className = 'ts-toggle';
-        btn.innerHTML = `${heading.textContent}<span class="ts-chevron"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>`;
-
         const body = document.createElement('div');
         body.className = 'ts-body';
 
@@ -142,6 +138,42 @@ const { title, description, techStack, github, demo, period, category, role, tea
           next = next.nextSibling;
           if (sibling instanceof Element && sibling.tagName === 'H2') break;
           body.appendChild(sibling);
+        }
+
+        // Pull the 결과 line out as a one-line preview so the collapsed row is scannable.
+        let previewText = '';
+        const resultP = Array.from(body.querySelectorAll('p')).find(p => {
+          const strong = p.querySelector('strong');
+          return strong?.textContent?.trim() === '결과';
+        });
+        if (resultP) {
+          previewText = (resultP.textContent ?? '').replace(/^결과\s*/, '').trim();
+          if (previewText.length > 90) previewText = previewText.slice(0, 90).trim() + '…';
+        }
+
+        const btn = document.createElement('button');
+        btn.className = 'ts-toggle';
+
+        const head = document.createElement('span');
+        head.className = 'ts-toggle-head';
+
+        const titleEl = document.createElement('span');
+        titleEl.className = 'ts-toggle-title';
+        titleEl.textContent = heading.textContent ?? '';
+
+        const chevron = document.createElement('span');
+        chevron.className = 'ts-chevron';
+        chevron.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+
+        head.appendChild(titleEl);
+        head.appendChild(chevron);
+        btn.appendChild(head);
+
+        if (previewText) {
+          const previewEl = document.createElement('span');
+          previewEl.className = 'ts-preview';
+          previewEl.textContent = previewText;
+          btn.appendChild(previewEl);
         }
 
         heading.replaceWith(btn, body);
@@ -300,25 +332,50 @@ const { title, description, techStack, github, demo, period, category, role, tea
     margin: 1.5rem 0;
   }
 
-  /* 트러블슈팅 accordion */
+  /* Collapsible section list */
   .project-content :global(.ts-toggle) {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
     cursor: pointer;
     background: none;
     border: none;
-    padding: 0;
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: #e8e8e8;
-    font-family: inherit;
-    letter-spacing: -0.02em;
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid #222;
+    border-top: 1px solid #1e1e1e;
+    padding: 0.9rem 0;
     width: 100%;
     text-align: left;
+    font-family: inherit;
+    transition: background-color 0.15s ease;
+  }
+  .project-content :global(.ts-toggle:first-of-type) {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #222;
+  }
+  .project-content :global(.ts-toggle:hover) {
+    background: rgba(255, 255, 255, 0.025);
+  }
+  .project-content :global(.ts-toggle-head) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .project-content :global(.ts-toggle-title) {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #e8e8e8;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+  }
+  .project-content :global(.ts-toggle.open .ts-toggle-title) {
+    color: #b5f23d;
+  }
+  .project-content :global(.ts-preview) {
+    font-size: 0.8125rem;
+    color: #6b6b6b;
+    line-height: 1.5;
   }
   .project-content :global(.ts-chevron) {
     color: #555;
@@ -340,6 +397,7 @@ const { title, description, techStack, github, demo, period, category, role, tea
   .project-content :global(.ts-body.open) {
     max-height: 9999px;
     opacity: 1;
+    padding: 0.5rem 0 1rem;
   }
 
   /* Section label (callout) */
