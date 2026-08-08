@@ -56,6 +56,23 @@ collapseDetails: true
 | 로직 재사용 규칙이 텍스트에만 존재 → 버그 반복(#11~#16) | 금지 패턴 명시 + 책임 분리 — `docs/code-standards.md`, `architecture.md` |
 | 배포 체크리스트 없음 → 단계 누락 가능 | 순서대로 이행 확인 — `recipes/ota-deploy.md`, `new-build.md` |
 
+## 성능 최적화 — ToonCard 리렌더 3회 → 1회
+
+**문제** 툰 목록을 당겨서 새로고침하면 데이터가 바뀌지 않은 카드도 전부 리렌더링돼, 툰이 많아질수록 새로고침이 느려질 수 있는 문제가 있었습니다. 원인을 확인하려 해도 Expo Go 환경에서는 React DevTools Profiler를 쓸 수 없었습니다 — Metro Hermes 엔진과 별도 DevTools 연결이 필요하고 시뮬레이터에서만 안정적으로 동작하는데, 실제로는 `npx expo start`로 Expo Go에서 실행 중이라 사용할 수 없는 환경이었습니다.
+
+**분석** DevTools Profiler, `console.time`/`console.timeEnd`, 직접 만든 측정 도구를 비교했습니다. Profiler는 `expo-dev-client` 커스텀 빌드가 필요해 측정 하나 때문에 오버킬이었고, `console.time`은 누적 평균·렌더 횟수 집계가 안 되고 `__DEV__` 가드를 매 호출마다 붙여야 해 코드가 지저분해졌습니다. `performance.now()`는 JS 표준이라 Expo Go에서도 동작하고 `report()`로 여러 측정값을 한 번에 집계할 수 있어, 가장 적은 비용으로 가장 많은 정보를 주는 자체 도구(`perf.js`)를 선택했습니다. 이 도구로 측정한 결과, `HomeScreen`이 새로고침 후 `setToons(sorted)`로 상태를 갱신할 때 메모이제이션 없는 `ToonCard`가 매번 전부 리렌더되고, 내부 `allEpisodes()`가 렌더마다 `episodeHistory`·`unreadPosts`를 합산·정렬해 새 배열을 생성하는 게 원인임을 확인했습니다.
+
+**실행** `__DEV__` 가드를 파일 안에 한 번만 작성해 호출 코드는 깔끔하게 유지하고 다른 컴포넌트에도 import 한 줄로 재사용 가능하도록 `perf.js`를 분리했습니다. 이 도구로 원인을 특정한 뒤 `ToonCard`에 `toon.updatedAt` 비교자를 가진 `React.memo`를 적용하고, `allEpisodes()` 결과를 `useMemo`로 감쌌습니다.
+
+**결과** `perf.js`로 직접 측정한 결과, 새로고침 시 `ToonCard` 렌더 횟수가 툰 개수와 무관하게 1회로 고정됐습니다 — 개선 전에는 새로고침 1회당 3회 렌더(툰 10개면 30회)였지만, 개선 후에는 새로고침을 몇 번 반복해도 초기 마운트 1회뿐입니다. 다만 체감 새로고침 시간 자체는 크게 줄지 않았는데, 전체 시간의 95%를 Instagram API 호출이 차지하는 병목이라 렌더 최적화만으로는 해결되지 않았습니다.
+
+| 항목 | 개선 전 | 개선 후 | 비고 |
+| --- | --- | --- | --- |
+| ToonCard 렌더 | 새로고침 1회 → 3회 | 새로고침 몇 회든 → 1회(고정) | 툰 10개 기준 30회 → 10회 |
+| syncFromSupabase | 221.4ms | 평균 133.5ms | |
+| checkAllToons | 23,977ms (API 실호출) | 평균 1.3ms (캐시된 케이스) | |
+| getToons() 호출 | 5회 | 5회 (변경 없음) | 7ms 수준이라 최적화 대상에서 제외 |
+
 ## 배치 서버 없이 3시간 주기 감지
 
 **문제** 3시간마다 인스타그램을 확인하고 푸시 알림을 보내는 구조가 필요했지만, 별도 서버를 운영하는 건 개인 프로젝트 규모에 유지비와 관리 부담이 컸습니다.
@@ -95,22 +112,6 @@ collapseDetails: true
 **실행** 앱과 서버(GitHub Actions)가 서로 다른 런타임이라는 제약 속에서, 두 환경 모두에서 임포트 가능한 `matchingUtils.js`로 공통 매칭 로직을 추출해 앱과 서버 모두 이 파일을 참조하도록 통일하고, `keyWords.length > 0` 가드 추가와 `minMatch` 기준 일원화로 오탐 조건을 하나로 정리했습니다.
 
 **결과** 앱에서 3편만 감지할 때 서버는 5편을 감지하던 불일치가 해소됐고, 한 곳만 수정하면 양쪽에 동시 반영되는 구조로 같은 유형의 오탐도 재발하지 않았습니다.
-
-## 성능 최적화 — ToonCard 리렌더 3회 → 1회
-
-**문제** 툰 목록을 당겨서 새로고침하면 데이터가 바뀌지 않은 카드도 전부 리렌더링돼, 툰이 많아질수록 새로고침이 느려질 수 있는 문제가 있었습니다. 원인을 확인하려 해도 Expo Go 환경에서는 React DevTools Profiler를 쓸 수 없었습니다 — Metro Hermes 엔진과 별도 DevTools 연결이 필요하고 시뮬레이터에서만 안정적으로 동작하는데, 실제로는 `npx expo start`로 Expo Go에서 실행 중이라 사용할 수 없는 환경이었습니다.
-
-**분석** DevTools Profiler, `console.time`/`console.timeEnd`, 직접 만든 측정 도구를 비교했습니다. Profiler는 `expo-dev-client` 커스텀 빌드가 필요해 측정 하나 때문에 오버킬이었고, `console.time`은 누적 평균·렌더 횟수 집계가 안 되고 `__DEV__` 가드를 매 호출마다 붙여야 해 코드가 지저분해졌습니다. `performance.now()`는 JS 표준이라 Expo Go에서도 동작하고 `report()`로 여러 측정값을 한 번에 집계할 수 있어, 가장 적은 비용으로 가장 많은 정보를 주는 자체 도구(`perf.js`)를 선택했습니다. 이 도구로 측정한 결과, `HomeScreen`이 새로고침 후 `setToons(sorted)`로 상태를 갱신할 때 메모이제이션 없는 `ToonCard`가 매번 전부 리렌더되고, 내부 `allEpisodes()`가 렌더마다 `episodeHistory`·`unreadPosts`를 합산·정렬해 새 배열을 생성하는 게 원인임을 확인했습니다.
-
-**실행** `__DEV__` 가드를 파일 안에 한 번만 작성해 호출 코드는 깔끔하게 유지하고 다른 컴포넌트에도 import 한 줄로 재사용 가능하도록 `perf.js`를 분리했습니다. 이 도구로 원인을 특정한 뒤 `ToonCard`에 `toon.updatedAt` 비교자를 가진 `React.memo`를 적용하고, `allEpisodes()` 결과를 `useMemo`로 감쌌습니다.
-
-```js
-export default memo(ToonCard, (prev, next) => {
-  return prev.toon.updatedAt === next.toon.updatedAt;
-});
-```
-
-**결과** `perf.js`로 직접 측정한 결과, 새로고침 시 `ToonCard` 렌더 횟수가 개선 전 3회(초기 + 상태 갱신 2회)에서 개선 후 1회(초기 마운트만)로 줄었습니다.
 
 ## 트러블슈팅
 
