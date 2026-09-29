@@ -1,0 +1,52 @@
+---
+title: 'NestJS 요청 처리 흐름과 DTO·Entity의 역할 구분'
+description: 'Request부터 SQLite까지 각 계층이 담당하는 일을 순서대로 정리하고, CreateUserDto와 User Entity가 왜 분리되는지 그 근거를 기록한다.'
+pubDate: 2026-09-25
+category: 'Backend'
+tags: ['NestJS', 'TypeORM', '아키텍처']
+draft: false
+---
+
+NestJS로 회원가입 API를 구현하면서 요청이 어떤 경로로 처리되는지, 그리고 DTO와 Entity가 각각 어디에 묶이는지를 정리해 둔다.
+
+## 요청 처리 흐름
+
+클라이언트는 `{ email: 'asdf@asdf.com', password: 'asdf' }` 형태의 body를 담아 서버로 요청을 보낸다. 이 요청은 컨트롤러에 닿기 전에 여섯 단계를 거친다.
+
+**1. Request**
+
+클라이언트가 body를 포함해 HTTP 요청을 전송하는 출발점이다. 컨트롤러의 `@Body() body: CreateUserDto`로 수신하는 데이터가 바로 이것이다.
+
+**2. ValidationPipe**
+
+요청이 컨트롤러에 도달하기 전에 통과하는 검증 관문이다. `CreateUserDto`를 참조물로 삼아 데이터를 검사한다. `whitelist` 옵션을 설정하면 DTO에 정의되지 않은 필드를 걸러내고, `@IsEmail()` 같은 데코레이터를 통해 형식이 맞지 않는 요청은 여기서 차단된다. DTO는 "이 요청은 어떤 모양이어야 하는가"를 정의하는 참조 기준이다.
+
+**3. UsersController**
+
+라우트를 정의하고 들어온 요청에서 필요한 데이터를 추출하는 계층이다. `@Post('/signup')` 같은 경로를 선언하고, body에서 `email`·`password`를 꺼내 서비스로 넘긴다. 비즈니스 로직은 이 계층에 두지 않는다. `return this.usersService.create(...)`로 서비스에 위임하는 것이 그 역할이다.
+
+**4. UsersService**
+
+실제 애플리케이션 로직을 담는 계층이다. 회원가입이라면 유저 생성, 비밀번호 해싱, 중복 확인 같은 처리가 여기서 이루어진다. `create(email, password)` 메서드가 위치하는 곳이다.
+
+**5. UsersRepository**
+
+TypeORM이 생성하는, DB로 통하는 인터페이스다. `@InjectRepository(User)`로 주입받은 `repo`가 이 계층에 해당하며, `repo.create(...)`·`repo.save(...)`를 통해 실행된다. 서비스는 SQL을 직접 작성하지 않고 이 저장소에 위임한다.
+
+**6. SQLite DB**
+
+데이터가 실제로 기록되는 저장소다.
+
+---
+
+## CreateUserDto와 User Entity의 차이
+
+이 흐름에서 참조물은 두 가지다. `CreateUserDto`는 ValidationPipe가, `User Entity`는 UsersService와 UsersRepository가 각각 참조한다.
+
+둘은 역할이 다르다. DTO는 "외부에서 들어오는 요청의 모양"을 정의하는 입력 검증용 객체이고, Entity는 "DB에 저장되는 유저의 모양"을 정의하는 테이블 정의용 객체다. 지금은 둘 다 `email`·`password` 필드를 갖고 있어 비슷해 보이지만, 실무에서는 명확하게 갈라진다.
+
+Entity에는 `id`나 DB가 자동으로 채우는 `createdAt`이 존재하지만 요청 DTO에는 없다. 반대로 입력 검증에만 필요한 `passwordConfirm` 같은 필드는 DTO에는 있지만 Entity에는 없다. 다이어그램이 둘을 서로 다른 계층에 연결해 두는 이유가 여기에 있다.
+
+## 정리
+
+계층별로 책임을 분리해 두면 각 구성 요소를 독립적으로 변경할 수 있다. DTO와 Entity를 처음에는 같은 클래스로 합쳐 쓰는 경우도 있지만, 입력 검증과 DB 스키마는 변경 이유가 다르기 때문에 분리해 두는 것이 유지보수 면에서 낫다. 이 구분을 초기 설계 단계에서 명확히 해 두었다면 이후 리팩터링 비용을 줄일 수 있었을 것이다.

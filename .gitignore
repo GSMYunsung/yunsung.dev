@@ -21,3 +21,6 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/
+
+# playwright mcp snapshots
+.playwright-mcp/
