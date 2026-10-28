@@ -47,6 +47,8 @@
     scroll-behavior: smooth;
     font-family: var(--font-sans);
     font-size: 17px;
+    width: 100%;
+    overflow-x: hidden;
   }
 
   body {
@@ -54,9 +56,11 @@
     color: var(--color-ink);
     line-height: 1.7;
     @apply antialiased;
+    width: 100%;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
     transition:
       background-color 0.2s ease,
       color 0.2s ease;

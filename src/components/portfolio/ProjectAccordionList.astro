@@ -21,7 +21,7 @@ const { projects } = Astro.props;
           aria-controls={panelId}
         >
           <span class="order-2 col-span-2 text-sm text-muted md:order-none md:col-span-1">{period}</span>
-          <span class="order-1 md:order-none">
+          <span class="order-1 min-w-0 md:order-none">
             <span class="block font-display text-xl font-bold tracking-tight transition group-hover:text-accent md:text-2xl">
               {title}
             </span>
@@ -31,40 +31,40 @@ const { projects } = Astro.props;
         </button>
 
         <div id={panelId} class={`accordion-panel ${i === 0 ? 'open' : ''}`}>
-          <div class="grid gap-8 pb-10 md:grid-cols-[7.5rem_1fr]">
+          <div class="grid grid-cols-1 gap-8 pb-10 md:grid-cols-[7.5rem_1fr]">
             <div class="hidden md:block"></div>
             <div class="space-y-6">
               {role && (
-                <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
+                <div class="grid grid-cols-1 gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
                   <h4 class="font-serif text-lg italic text-muted">Role</h4>
                   <div class="leading-relaxed">{role}</div>
                 </div>
               )}
               {problem && (
-                <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
+                <div class="grid grid-cols-1 gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
                   <h4 class="font-serif text-lg italic text-muted">Problem</h4>
                   <div class="leading-relaxed">{problem}</div>
                 </div>
               )}
               {solution && (
-                <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
+                <div class="grid grid-cols-1 gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
                   <h4 class="font-serif text-lg italic text-muted">Solution</h4>
                   <div class="leading-relaxed">{solution}</div>
                 </div>
               )}
               {contribution && contribution.length > 0 && (
-                <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
+                <div class="grid grid-cols-1 gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
                   <h4 class="font-serif text-lg italic text-muted">Contribution</h4>
                   <ul class="space-y-1.5">
                     {contribution.map((item) => (
                       <li class="flex gap-3">
-                        <span class="text-accent">→</span>{item}
+                        <span class="text-accent">→</span><span class="min-w-0">{item}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
-              <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
+              <div class="grid grid-cols-1 gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
                 <h4 class="font-serif text-lg italic text-muted">Tech</h4>
                 <p class="text-muted">{techStack.join(' · ')}</p>
               </div>

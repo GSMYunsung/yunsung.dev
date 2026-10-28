@@ -32,7 +32,7 @@ const groups = [
 ---
 
 <section id="skills" class="border-t border-line bg-bg text-ink">
-  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
+  <div class="mx-auto grid grid-cols-1 max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
     <div class="animate-in">
       <h2 class="font-serif text-2xl italic md:sticky md:top-24 md:text-3xl">기술</h2>
     </div>
@@ -45,7 +45,7 @@ const groups = [
           </h3>
           <dl>
             {group.skills.map((skill) => (
-              <div class="grid gap-1 border-b border-line py-4 md:grid-cols-[14rem_1fr] md:gap-6">
+              <div class="grid grid-cols-1 gap-1 border-b border-line py-4 md:grid-cols-[14rem_1fr] md:gap-6">
                 <dt class="font-medium">{skill.name}</dt>
                 <dd class="text-muted">{skill.desc}</dd>
               </div>

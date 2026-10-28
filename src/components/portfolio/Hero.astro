@@ -14,7 +14,7 @@
     <span class="hero-line"><span class="hero-line-inner">Yunsung<span class="text-accent">.</span></span></span>
   </h1>
 
-  <div class="mt-14 grid gap-12 border-t border-ink pt-8 md:mt-20 md:grid-cols-[1.4fr_1fr] md:gap-16">
+  <div class="mt-14 grid grid-cols-1 gap-12 border-t border-ink pt-8 md:mt-20 md:grid-cols-[1.4fr_1fr] md:gap-16">
     <div class="animate-in">
       <p class="whitespace-pre-line text-3xl font-semibold leading-snug tracking-tight md:text-[2.6rem] md:leading-[1.2]">
         <span>"이거 왜 매번 이래?"를</span><br />
@@ -40,7 +40,7 @@
       ].map((row) => (
         <div class="grid grid-cols-[4.5rem_1fr] gap-4 border-b border-line py-3.5 first:pt-0">
           <dt class="font-serif text-lg italic text-muted">{row.label}</dt>
-          <dd>{row.value}</dd>
+          <dd class="min-w-0">{row.value}</dd>
         </div>
       ))}
     </dl>
