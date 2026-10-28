@@ -1,0 +1,15 @@
+---
+import AINoteLayout from '../../layouts/AINoteLayout.astro';
+import { aiNotes } from '../../data/aiNotes';
+
+export async function getStaticPaths() {
+  return aiNotes.map((note) => ({
+    params: { slug: note.slug },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+---
+
+<AINoteLayout note={note} />
