@@ -1,0 +1,37 @@
+---
+const items = [
+  { title: 'CrossStitch', company: '사이드', desc: '커밋 기반 픽셀 아트 README 카드' },
+  { title: 'Toonify', company: '사이드', desc: '인스타툰 신작 자동 감지 알림' },
+  { title: '카모아', company: '팀오투', desc: '렌트카 예약 플랫폼 React 마이그레이션' },
+  { title: '영양사 관리 웹', company: 'CNAI', desc: 'Remix 기반 식단 분석·관리 콘솔' },
+  { title: '키오스크 UI', company: 'CNAI', desc: 'CSV 기반 공통 템플릿 키오스크' },
+  { title: '야구 팬 플랫폼', company: 'CNAI', desc: '8만+ 이용 추첨 시스템 재설계' },
+  { title: 'yunsung.dev', company: '사이드', desc: 'Astro 기반 이 포트폴리오' },
+];
+---
+
+<section id="apps" class="overflow-hidden border-t border-line bg-bg2">
+  <div class="mx-auto max-w-6xl px-5 pt-24 md:pt-36">
+    <div class="animate-in">
+      <h2 class="font-serif text-2xl italic md:text-3xl">작업 화면</h2>
+      <p class="mt-3 text-muted">스크린샷은 준비 중입니다 — 곧 채워질 자리입니다.</p>
+    </div>
+  </div>
+
+  <div class="marquee-viewport py-12 md:py-16" role="list" aria-label="Selected screens">
+    <ul class="marquee-track">
+      {[...items, ...items].map((item, i) => (
+        <li class="w-64 shrink-0 pr-5 md:w-80" aria-hidden={i >= items.length ? 'true' : undefined}>
+          <div class="relative flex aspect-[10/9] items-center justify-center overflow-hidden border border-line bg-bg text-muted">
+            <span class="font-display text-sm tracking-tight">Preview soon</span>
+          </div>
+          <p class="mt-3 flex items-baseline justify-between gap-2">
+            <span class="font-display text-lg font-bold tracking-tight">{item.title}</span>
+            <span class="text-xs text-muted">{item.company}</span>
+          </p>
+          <p class="mt-0.5 text-sm text-muted">{item.desc}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
