@@ -33,9 +33,10 @@ const links = [
               </a>
             </li>
           ))}
-          <li>
+          {/* 블로그 디자인 개편 전까지 임시로 숨김 — Refs #3 */}
+          {/* <li>
             <a href="/blog" class="text-sm transition text-muted hover:text-ink">Blog</a>
-          </li>
+          </li> */}
         </ul>
 
         <div class="flex items-center gap-4">
@@ -63,7 +64,8 @@ const links = [
             <a href={link.href} class="block py-2 text-sm text-muted">{link.label}</a>
           </li>
         ))}
-        <li><a href="/blog" class="block py-2 text-sm text-muted">Blog</a></li>
+        {/* 블로그 디자인 개편 전까지 임시로 숨김 — Refs #3 */}
+        {/* <li><a href="/blog" class="block py-2 text-sm text-muted">Blog</a></li> */}
       </ul>
     </div>
   )}
