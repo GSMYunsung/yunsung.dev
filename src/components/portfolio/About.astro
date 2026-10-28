@@ -13,31 +13,66 @@ const projects = await getCollection('projects');
     <div>
       <div class="animate-in">
         <p class="text-2xl font-medium leading-snug tracking-tight md:text-4xl md:leading-[1.25]">
-          React·TypeScript 기반 프론트엔드 개발로 시작해 React Native 앱, Remix 풀스택 웹까지 경험을 넓혀 왔습니다. AI를 기본 작업 방식으로 삼아, 반복되는 불편을 구조와 자동화로 없애는 데 집중합니다.
+          React·TypeScript 프론트엔드로 시작해 React Native 앱과 Remix 풀스택 웹까지 경험을 넓혀 왔습니다. 가장 큰 불편을 기준으로 목적을 세우고, AI와 함께 PoC를 빠르게 만들어 직접 써 보며 기능을 더합니다.
         </p>
         <p class="mt-6 max-w-2xl text-lg text-muted">
-          모든 프로젝트를 같은 순서로 만듭니다 — 가장 큰 불편한 점을 기준으로 목적을 세우고, AI와 함께 그 목적을 확인할 수 있는 PoC를 빠르게 만든 뒤, 실제로 계속 써보며 필요한 기능을 추가합니다.
+          AI가 만들고, 저는 방향과 품질을 책임집니다. 맡기기 전에 의도를 확정하고, 반복되는 지시는 스킬로 고정하며, 완료는 AI의 말이 아닌 테스트 결과로 판정합니다.
         </p>
       </div>
 
       <dl class="mt-16 grid grid-cols-2 gap-x-6 gap-y-10 md:mt-24 md:grid-cols-4">
         <div class="animate-in" style="--stagger: 40ms">
-          <dt class="font-serif text-6xl leading-none md:text-7xl md:min-h-[4.5rem]">3+</dt>
+          <dt class="count-up font-serif text-6xl leading-none md:text-7xl md:min-h-[4.5rem]" data-target="3" data-suffix="+">1+</dt>
           <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">년 개발 경력</dd>
         </div>
         <div class="animate-in" style="--stagger: 80ms">
-          <dt class="font-serif text-6xl leading-none md:text-7xl md:min-h-[4.5rem]">{projects.length}</dt>
+          <dt class="count-up font-serif text-6xl leading-none md:text-7xl md:min-h-[4.5rem]" data-target={projects.length}>1</dt>
           <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">프로젝트</dd>
         </div>
         <div class="animate-in" style="--stagger: 120ms">
-          <dt class="block font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl md:min-h-[4.5rem]">React</dt>
+          <dt class="block font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl md:min-h-[4.5rem]">React · React Native</dt>
           <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">주력 분야</dd>
         </div>
         <div class="animate-in" style="--stagger: 160ms">
-          <dt class="block font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl md:min-h-[4.5rem]">Mobility · Healthcare</dt>
+          <dt class="block font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl md:min-h-[4.5rem]">Mobility · Healthcare · Kiosk</dt>
           <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">도메인 경험</dd>
         </div>
       </dl>
+
+      <script>
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const counters = document.querySelectorAll<HTMLElement>('.count-up');
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              io.unobserve(el);
+
+              const target = parseInt(el.dataset.target ?? '0', 10);
+              const suffix = el.dataset.suffix ?? '';
+              if (reduced || target <= 1) {
+                el.textContent = `${target}${suffix}`;
+                continue;
+              }
+
+              const duration = 900;
+              const start = performance.now();
+              function tick(now: number) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.max(1, Math.round(1 + eased * (target - 1)));
+                el.textContent = `${current}${suffix}`;
+                if (progress < 1) requestAnimationFrame(tick);
+              }
+              requestAnimationFrame(tick);
+            }
+          },
+          { threshold: 0.4 }
+        );
+        counters.forEach((el) => io.observe(el));
+      </script>
     </div>
   </div>
 </section>
