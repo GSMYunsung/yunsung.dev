@@ -17,12 +17,12 @@ const performanceRows = [
 ];
 
 const automationItems = [
-  'CodePush OTA 배포 — 반영 시간 3일 → 5분 (CNAI)',
-  'GitHub Actions 3시간 배치로 인스타툰 신작 자동 감지 (Toonify)',
-  '추첨 명단 엑셀 업로드 자동화 — 명단 관리 이틀 → 1시간 (CNAI)',
-  '버그 위험도(Low/Medium/High) 판정으로 절차 자동 축소 — 전체 7단계 중 Low는 3단계만 수행 (bugfix-cycle)',
-  '코드 수정 직전 스냅샷 저장, 되돌릴 때는 대화 기억 대신 스냅샷 파일로만 복원 (revert-change · 다챙김)',
-  'PR 실패 시 자동 코멘트, main이 깨지면 수정 PR 자동 생성, 리뷰는 CodeRabbit이 1차로 수행 (CrossStitch)',
+  '코드 수정 착수 전 스냅샷을 저장해, 대화 기억 대신 파일 기준으로 정확히 그 작업만 되돌림 (revert-change · 다챙김)',
+  '"개발모드로 실행해줘" 요청 시 네이티브 재빌드 필요 여부를 자동 판단해 dev client·Metro를 복구 (expo-dev-run · 다챙김)',
+  'EAS 빌드 전 주요 화면 흐름 13개를 자동 실행해 스크린샷 포함 보고서 생성 (maestro-test · 다챙김)',
+  '버그 수정 요청마다 리스크 등급을 매겨, Low 등급은 중간 단계를 생략하고 바로 실행 (bugfix-cycle · Toonify)',
+  '단계가 멈추거나 권한 오류가 나면 상태 기계 기반으로 하네스를 부분 재실행·복구 (ai-workflow-orchestrator)',
+  '디자인 요청 한마디를 트렌드 수집 → 브리프 → Figma MCP → 코드 반영까지 한 흐름으로 고정 (design-flow · 이 포트폴리오 전용)',
 ];
 
 const aiPrinciples = [
