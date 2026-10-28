@@ -1,4 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#0f0f0f"/>
-  <text x="16" y="12" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" font-style="italic" fill="#b5f23d" text-anchor="middle" dominant-baseline="central">y</text>
+  <rect width="32" height="32" rx="7" fill="#1a1a1a"/>
+  <text x="16" y="23" font-family="system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="800" text-anchor="middle" fill="#f5f4f0">y<tspan fill="#4d8dba">.</tspan></text>
 </svg>
