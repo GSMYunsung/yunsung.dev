@@ -6,11 +6,11 @@
   --font-display: 'Bricolage Grotesque', 'Pretendard Variable', system-ui, sans-serif;
   --font-serif: 'Instrument Serif', 'Pretendard Variable', Georgia, serif;
 
-  --color-bg:         #e9e6de;
-  --color-bg2:        #ddd8cc;
+  --color-bg:         #f5f4f0;
+  --color-bg2:        #e9e7e0;
   --color-ink:        #1a1a1a;
-  --color-muted:      #6a6a6a;
-  --color-line:       #cfc9ba;
+  --color-muted:      #595959;
+  --color-line:       #c7c2b3;
   --color-accent:     #B7D894;
   --color-accent-ink: #1a1a1a;
 
