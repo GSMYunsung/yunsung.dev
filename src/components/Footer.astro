@@ -2,24 +2,13 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="px-4 sm:px-8 py-8 w-full max-w-7xl mx-auto" style="border-top: 1px solid #1e1e1e;">
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-    <span class="text-sm font-semibold" style="color:#b5f23d;">yunsung</span>
-    <p class="text-xs" style="color:#444444;">© {year} 최윤성. Built with Astro & Tailwind CSS.</p>
-    <div class="flex items-center gap-5">
-      {[
-        { label: 'GitHub', href: 'https://github.com/GSMYunsung' },
-        { label: 'Email', href: 'mailto:12345ggh81@gmail.com' },
-      ].map((link) => (
-        <a href={link.href}
-          target={link.href.startsWith('http') ? '_blank' : undefined}
-          rel="noopener noreferrer"
-          class="text-xs transition-colors"
-          style="color:#444444;"
-          onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#444444'">
-          {link.label}
-        </a>
-      ))}
-    </div>
+<footer class="border-t border-line bg-bg text-muted">
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 text-sm md:flex-row md:items-center md:justify-between">
+    <p>최윤성 · Frontend Developer · © {year}</p>
+    <ul class="flex gap-6">
+      <li><a class="ulink" href="https://github.com/GSMYunsung" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      <li><a class="ulink" href="mailto:12345ggh81@gmail.com">Email</a></li>
+      <li><a class="ulink" href="/blog">Blog</a></li>
+    </ul>
   </div>
 </footer>
