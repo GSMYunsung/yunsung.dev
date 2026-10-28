@@ -41,6 +41,11 @@ GitHub 프로필 README를 꾸미고 싶어도 마땅한 방법이 없었습니�
 
 ## AI 협업
 
+<div class="ai-stat">
+  <p class="ai-stat-value">2건</p>
+  <p class="ai-stat-caption">리뷰만 통과하고 넘어갈 뻔한, AI가 생성한 의도-구현 불일치 로직 버그</p>
+</div>
+
 **문제** Claude Code를 코드 생성 도구로만 쓰면 결과를 그대로 믿고 넘어가기 쉽습니다. 실제로 초기 버전에서 AI가 작성한 `applyRandomRemovalCells`는 `slice(0, removeCount)`로 제거할 셀이 아니라 남아야 할 셀을 반환하는, 의도와 정반대로 동작하는 코드였고, `homeLogic.test.ts`는 프로덕션 로직을 테스트 파일 안에 그대로 복사해 검증하는 구조라 `HomeContent.tsx`가 바뀌어도 항상 통과하는 — 회귀를 잡지 못하는 테스트였습니다.
 
 **분석** AI가 만든 코드를 신뢰하고 넘어가는 방식과 직접 검증하는 방식을 비교했습니다. CodeRabbit 리뷰만으로는 의도-구현 불일치나 가짜 테스트까지 걸러내지 못한다고 판단해, 핵심 로직은 리뷰와 별개로 직접 읽고 검증하는 쪽을 선택했습니다.
