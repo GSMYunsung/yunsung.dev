@@ -395,4 +395,29 @@ const { title, description, techStack, github, demo, period, category, role, too
     border-radius: 4px;
     margin-bottom: 0.75rem;
   }
+
+  /* AI 협업 섹션 수치 카드 */
+  .project-content :global(.ai-stat) {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.875rem;
+    margin: 0.25rem 0 1.75rem;
+    padding: 1rem 1.5rem;
+    border-left: 2px solid var(--color-accent);
+    background: var(--color-bg2);
+    border-radius: 0 6px 6px 0;
+  }
+  .project-content :global(.ai-stat-value) {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+  .project-content :global(.ai-stat-caption) {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
 </style>
