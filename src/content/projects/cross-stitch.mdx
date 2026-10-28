@@ -8,9 +8,9 @@ demo: 'https://www.gitcrossstitch.site'
 period: '2026'
 category: '사이드'
 role: '기획 · 디자인 · 개발 (1인)'
-problem: '잔디(contribution graph)는 개성을 담기 어렵고, 외부 뱃지 서비스는 디자인이 획일적이라 커밋으로 그리는 픽셀 아트가 없었습니다.'
+problem: '커밋 기록을 개성 있게 보여줄 방법이 없어 직접 만들어야 했고, AI와 함께 개발하면서 생성된 코드를 그대로 믿으면 의도와 반대로 동작하는 버그가 숨을 위험도 있었습니다.'
 reasoning: '토큰을 클라이언트 스토리지가 아닌 httpOnly 쿠키로 저장 — JS로 읽을 수 없어 XSS 탈취 경로를 근본적으로 차단한다고 판단했습니다.'
-solution: 'GitHub OAuth 로그인 후 20×20 픽셀 그리드를 실제 커밋 수만큼만 채우는 CHALLENGE 모드와, 완성한 아트를 README에 바로 삽입할 수 있는 SVG 카드 API를 구현했습니다.'
+solution: '1인으로 기획·디자인·개발을 모두 맡아, GitHub OAuth 로그인과 httpOnly 쿠키 기반 토큰 관리부터 구현했습니다. 20×20 픽셀 그리드에 실제 커밋 수만큼만 채울 수 있는 CHALLENGE 모드를 만들고 매달 초과 셀을 자동 정리하는 GitHub Actions 크론 잡을 붙였으며, 완성한 아트를 README에 바로 쓸 수 있도록 별도 이미지 서버 없이 동작하는 SVG 카드 API까지 구축했습니다. 동시에 ESLint → 타입체크 → Vitest로 이어지는 PR CI를 구성해, AI가 생성한 코드도 리뷰에만 맡기지 않고 직접 읽고 검증하는 과정을 거쳤습니다.'
 contribution:
   [
     'GitHub OAuth 로그인 및 httpOnly 쿠키 기반 토큰 관리 구현',
