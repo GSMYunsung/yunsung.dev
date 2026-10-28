@@ -31,6 +31,7 @@ const projects = defineCollection({
     role: z.string().optional(),
     team: z.string().optional(),
     problem: z.string().optional(),
+    reasoning: z.string().optional(),
     solution: z.string().optional(),
     tools: z.array(z.string()).optional(),
     links: z.object({
