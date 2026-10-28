@@ -27,6 +27,8 @@ collapseDetails: true
 
 나가기 전에 한 번 더 챙기는 소지품 관리 앱입니다. 하루 종일 알림을 보내는 대신, 물건을 두고 오기 쉬운 세 번의 순간(출발·이탈·귀가)에만 짧게 확인합니다.
 
+![홈, 출발 체크, 외출 중, 귀가 완료, 설정 화면](https://raw.githubusercontent.com/GSMYunsung/chaengkim/main/docs/readme/screens-store.jpg)
+
 ## 알림 피로 없는 3단계 확인 흐름
 
 **문제** 물건을 잃어버리는 건 대부분 자리를 뜨는 그 순간인데, 기존 리마인더 앱들은 하루 종일 알림을 보내 금방 무뎌지고 정작 중요한 순간을 놓치게 됩니다.
@@ -36,6 +38,8 @@ collapseDetails: true
 **실행** `expo-location` 백그라운드 위치와 `expo-task-manager`로 머문 곳을 감지해, 카페·학원처럼 한동안 머문 자리를 뜨는 순간 알림을 보내도록 구현했습니다. 집은 자동으로 제외했고, 얼마나 머문 뒤 알릴지는 10·15·30·60분 중 고를 수 있게 했습니다.
 
 **결과** 알림에서 바로 "모두 챙김"을 눌러 응답하거나, 앱에서 물건을 하나씩 확인할 수 있는 흐름을 완성했습니다.
+
+![자리 뜰 때 확인 화면](https://raw.githubusercontent.com/GSMYunsung/chaengkim/main/docs/readme/screen-check.png)
 
 ## 지오펜스 지연 문제 — 자동 감지 대신 알림 + 수동 버튼
 
@@ -56,6 +60,10 @@ collapseDetails: true
 **실행** `expo-sqlite`로 기기 안 파일 하나(`chaengkim.db`)에 소지품·외출 세션·머문 장소·알림 로그를 저장하고, 외출 중에만 위치 기록을 켜고 귀가하면 멈추도록 구현했습니다. 기록도 이번 달 것만 남도록 제한했습니다.
 
 **결과** 서버 없이도 하루 동선을 지도로, 연속 챙김 횟수를 기록으로 남길 수 있게 됐습니다.
+
+![기록 캘린더](https://raw.githubusercontent.com/GSMYunsung/chaengkim/main/docs/readme/screen-calendar.png)
+
+![하루 동선 지도](https://raw.githubusercontent.com/GSMYunsung/chaengkim/main/docs/readme/screen-map.jpg)
 
 ## 출시 전 안전망 — Maestro 테스트와 스냅샷
 
