@@ -4,14 +4,25 @@ const experiences = [
     company: '팀오투',
     role: '프론트엔드 개발자 · 카모아 렌트카 플랫폼',
     period: '2024.05 — 2024.11',
-    summary: '렌트카 예약 플랫폼 카모아의 유지보수와 신규 기획 개발을 맡아, Vanilla JS·Pug 레거시 코드베이스를 React로 전환하는 작업을 담당했습니다.',
+    bullets: [
+      '카모아 렌트카 예약 플랫폼 유지보수 및 신규 기획 개발',
+      'Vanilla JS·Pug 레거시 코드를 React로 점진적 전환 (공통 컴포넌트 10여 개)',
+      '숙박페스타 이벤트 필터 기능 개발 (독립 훅, 플래그 기반 on/off)',
+      '추첨 로직 재설계 및 홈-목록 가격 불일치 등 기존 오류 수정',
+    ],
     tech: 'React · TypeScript · Redux · Webpack5 · Pug · Vanilla JS',
   },
   {
     company: 'CNAI',
     role: '프론트엔드 개발자 · 식단 앱 / 키오스크 / 야구 플랫폼',
     period: '2022.10 — 2024.05',
-    summary: '영양사 관리 웹을 프레임워크 선정부터 설계·구현까지 담당했고, React Native 식단 관리 앱과 키오스크 UI 개발, 야구 팬 플랫폼 유지보수를 함께 맡았습니다.',
+    bullets: [
+      '영양사 관리 웹 0→1 설계·구축 (Remix, 15+ 화면)',
+      'CodePush 기반 OTA 배포 체계 도입',
+      'React Native 기반 식단 관리 앱 설계·구축',
+      '키오스크 UI 개발 (CSV 기반 공통 템플릿)',
+      '8만+ 이용 야구 팬 플랫폼 유지보수 및 추첨 로직 재설계',
+    ],
     tech: 'Remix · React Native · TypeScript · Jotai · Storybook · jQuery',
   },
 ];
@@ -46,7 +57,11 @@ const awards = [
                 <p class="mt-1 font-serif text-lg italic text-muted">{exp.period}</p>
               </div>
               <div>
-                <p class="leading-relaxed">{exp.summary}</p>
+                <ul class="space-y-2.5">
+                  {exp.bullets.map((b) => (
+                    <li class="border-b border-line pb-2.5">{b}</li>
+                  ))}
+                </ul>
                 <p class="mt-4 text-sm text-muted">{exp.tech}</p>
               </div>
             </div>
