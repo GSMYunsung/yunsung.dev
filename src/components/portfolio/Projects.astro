@@ -1,11 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 
-const allProjects = await getCollection('projects');
-const companyCategories = ['CNAI', '팀오투'];
-const sideProjects = allProjects
-  .filter((p) => !companyCategories.includes(p.data.category))
-  .sort((a, b) => a.data.order - b.data.order);
+const allProjects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <section id="projects" class="border-t border-line bg-bg text-ink">
@@ -18,7 +14,7 @@ const sideProjects = allProjects
       <p class="mb-8 text-muted">최신순 · 항목을 눌러 문제와 해결 과정을 확인하세요.</p>
 
       <ul class="border-t-2 border-ink">
-        {sideProjects.map((project, i) => {
+        {allProjects.map((project, i) => {
           const { title, period, description, techStack, role, problem, solution } = project.data;
           const panelId = `panel-${project.id}`;
           return (

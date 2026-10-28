@@ -4,23 +4,14 @@ const experiences = [
     company: '팀오투',
     role: '프론트엔드 개발자 · 카모아 렌트카 플랫폼',
     period: '2024.05 — 2024.11',
-    bullets: [
-      'Vanilla JS·Pug 레거시를 React로 점진적 전환, 커스텀 훅 기반 공통 패턴을 기본 컴포넌트 10여 개에 일관 적용',
-      '숙박페스타 이벤트 필터를 독립 훅으로 분리해 플래그 하나로 활성화·해제 제어',
-      '반복 구매자가 불리해지는 추첨 로직을 공정하게 재설계, 홈-목록 가격 불일치 등 기존 오류 다수 수정',
-    ],
+    summary: '렌트카 예약 플랫폼 카모아의 유지보수와 신규 기획 개발을 맡아, Vanilla JS·Pug 레거시 코드베이스를 React로 전환하는 작업을 담당했습니다.',
     tech: 'React · TypeScript · Redux · Webpack5 · Pug · Vanilla JS',
   },
   {
     company: 'CNAI',
     role: '프론트엔드 개발자 · 식단 앱 / 키오스크 / 야구 플랫폼',
     period: '2022.10 — 2024.05',
-    bullets: [
-      '영양사 관리 웹을 Remix로 1인 3개월 만에 0→1 구축, CodePush 도입으로 배포 반영 시간을 3일에서 5분으로 단축',
-      'React Native 기반 식단 관리 앱을 설계·구축하고, 외부 AI 서비스를 자사 AI로 전환해 API 의존성 제거',
-      'CSV 기반 키오스크 공통 템플릿을 설계해 고객사별 메뉴 구성 변경 시 코드 수정 없이 대응, 납품 속도 약 50% 단축',
-      '8만 명 이상이 이용하는 야구 플랫폼의 추첨 로직을 공정하게 재설계, 명단 관리 작업을 이틀에서 한 시간으로 자동화',
-    ],
+    summary: '영양사 관리 웹을 프레임워크 선정부터 설계·구현까지 담당했고, React Native 식단 관리 앱과 키오스크 UI 개발, 야구 팬 플랫폼 유지보수를 함께 맡았습니다.',
     tech: 'Remix · React Native · TypeScript · Jotai · Storybook · jQuery',
   },
 ];
@@ -55,11 +46,7 @@ const awards = [
                 <p class="mt-1 font-serif text-lg italic text-muted">{exp.period}</p>
               </div>
               <div>
-                <ul class="space-y-2.5">
-                  {exp.bullets.map((b) => (
-                    <li class="border-b border-line pb-2.5">{b}</li>
-                  ))}
-                </ul>
+                <p class="leading-relaxed">{exp.summary}</p>
                 <p class="mt-4 text-sm text-muted">{exp.tech}</p>
               </div>
             </div>
