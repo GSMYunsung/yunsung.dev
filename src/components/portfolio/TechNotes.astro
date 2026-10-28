@@ -6,7 +6,13 @@ const tabs = [
 ];
 
 const pipeline = ['정의', '설계', '구현', '검증', '회고'];
-const pipelineSkills = ['clarify-intent', 'design-flow / harness', 'senior-frontend / pr-workflow', 'verify-solution / evidence-audit', 'harness-evolve'];
+const pipelineDetails = [
+  { desc: '요청 뒤의 진짜 목표를 의도→원인→제약→해법 순으로 먼저 확정합니다.', skills: 'clarify-intent · bugfix-cycle' },
+  { desc: '방향성을 정하고 구체화한 뒤 모션까지 설계합니다.', skills: 'design-flow · harness' },
+  { desc: '이슈·브랜치·Draft PR·커밋·진행 댓글로 전 과정을 추적합니다.', skills: 'senior-frontend · pr-workflow' },
+  { desc: '정적 검사→단위→통합→E2E 순으로 확인하고, AI의 완료 선언은 다시 감사합니다.', skills: 'verify-solution · evidence-audit' },
+  { desc: '머지·릴리스 후 결과가 아쉬우면 피드백을 일반화해 에이전트와 스킬을 고칩니다.', skills: 'harness-evolve' },
+];
 
 const performanceRows = [
   { item: 'ToonCard 리렌더 (Toonify)', before: '새로고침당 3회', after: '1회로 고정' },
@@ -60,11 +66,17 @@ const automationItems = [
             </li>
           ))}
         </ol>
-        <ul class="mt-12 grid gap-x-10 sm:grid-cols-2">
-          {pipelineSkills.map((t) => (
-            <li class="border-t border-line py-3 text-muted">{t}</li>
+        <dl class="mt-12">
+          {pipelineDetails.map((d, i) => (
+            <div class="grid grid-cols-1 gap-1 border-t border-line py-4 md:grid-cols-[7rem_1fr] md:gap-6">
+              <dt class="font-serif text-lg italic text-muted">{pipeline[i]}</dt>
+              <dd class="text-muted">{d.desc} <span class="text-ink">({d.skills})</span></dd>
+            </div>
           ))}
-        </ul>
+        </dl>
+        <div class="mt-8 rounded-r-md border-l-2 border-accent bg-bg2 px-6 py-4">
+          <p class="text-ink">AI의 "완료했습니다"는 그대로 믿지 않습니다. QA 캡처 누락, 종료 코드 오류, 소스 해시 불일치, 반복 차단 의심 — 네 가지 신호 중 하나라도 걸리면 완료 선언과 별도로 승인·반려 근거를 다시 감사합니다.</p>
+        </div>
       </div>
 
       <div role="tabpanel" id="tabpanel-performance" aria-labelledby="tab-performance" class="tech-panel hidden">
@@ -78,6 +90,9 @@ const automationItems = [
             </div>
           ))}
         </dl>
+        <p class="mt-8 max-w-xl text-muted">
+          Expo Go 환경이라 React DevTools Profiler를 쓸 수 없었던 제약 속에서, 직접 만든 측정 도구(<span class="text-ink">perf.js</span>)로 리렌더·응답 시간을 실측해 원인을 특정했습니다. "최적화했다"는 말이 아니라 이 숫자들이 근거입니다.
+        </p>
       </div>
 
       <div role="tabpanel" id="tabpanel-automation" aria-labelledby="tab-automation" class="tech-panel hidden">
@@ -90,6 +105,9 @@ const automationItems = [
             </li>
           ))}
         </ul>
+        <p class="mt-6 text-sm text-muted">
+          지금까지 전역 스킬 12개 · 프로젝트 전용 스킬 6개, 총 18개를 직접 설계해 4개 프로젝트에서 운영하고 있습니다.
+        </p>
       </div>
     </div>
   </div>
