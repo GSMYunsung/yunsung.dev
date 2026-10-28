@@ -3,7 +3,6 @@ const tabs = [
   { id: 'architecture', label: 'Architecture' },
   { id: 'performance', label: 'Performance' },
   { id: 'automation', label: 'Automation' },
-  { id: 'ai-collab', label: 'AI 협업' },
 ];
 
 const pipeline = ['정의', '설계', '구현', '검증', '회고'];
@@ -25,14 +24,6 @@ const automationItems = [
   '버그 조사와 수정 검토를 리서처·리뷰어 역할의 서브에이전트로 나눠, 사람이 매번 역할을 지정하지 않아도 병행 처리 (toon-researcher · toon-reviewer)',
   '단계가 멈추거나 권한 오류가 나면 상태 기계 기반으로 하네스를 부분 재실행·복구 (ai-workflow-orchestrator)',
   '디자인 요청 한마디를 트렌드 수집 → 브리프 → Figma MCP → 코드 반영까지 한 흐름으로 고정 (design-flow)',
-];
-
-const aiPrinciples = [
-  { name: '착수 전에 의도부터 확정', desc: '"고쳐줘" 같은 요청도 진짜 목표와 제약을 먼저 정리하고 이슈로 남긴 뒤 착수합니다.', skill: 'clarify-intent' },
-  { name: '반복은 설명하지 않고 고정', desc: '매번 같은 지시를 반복하지 않도록, 프로젝트별 반복 작업을 전용 스킬로 고정합니다.', skill: '프로젝트 전용 스킬 6개' },
-  { name: '위험에 비례한 절차', desc: '모든 변경에 같은 무게의 절차를 적용하지 않고, 위험도가 낮으면 중간 단계를 건너뜁니다.', skill: 'bugfix-cycle' },
-  { name: '완료는 근거로 판정', desc: '"했다"는 말 대신 테스트 결과·스크린샷·소스 해시로 완료를 판단하고 PR에 남깁니다.', skill: 'verify-solution · evidence-audit' },
-  { name: '되돌릴 수 있게, 고칠 수 있게', desc: '작업 전 스냅샷과 Draft PR로 되돌릴 길을 남기고, 결과가 아쉬우면 작업 체계 자체를 고칩니다.', skill: 'revert-change · harness-evolve' },
 ];
 ---
 
@@ -99,21 +90,6 @@ const aiPrinciples = [
             </li>
           ))}
         </ul>
-      </div>
-
-      <div role="tabpanel" id="tabpanel-ai-collab" aria-labelledby="tab-ai-collab" class="tech-panel hidden">
-        <h3 class="text-2xl font-semibold leading-snug tracking-tight md:text-4xl">완료는 근거로, 반복은 스킬로 고정합니다</h3>
-        <p class="mt-4 max-w-xl text-lg text-muted">의도를 확정하고 → 되돌릴 수 있게 만들고 → 근거로 완료를 판정한다는 세 원칙을, AI와 일하는 전체 과정에 동일하게 적용합니다.</p>
-        <dl class="mt-12">
-          {aiPrinciples.map((p) => (
-            <div class="grid gap-1 border-t border-line py-4 md:grid-cols-[14rem_1fr] md:gap-6">
-              <dt class="font-medium">{p.name}</dt>
-              <dd class="text-muted">
-                {p.desc} <span class="text-ink">({p.skill})</span>
-              </dd>
-            </div>
-          ))}
-        </dl>
       </div>
     </div>
   </div>
