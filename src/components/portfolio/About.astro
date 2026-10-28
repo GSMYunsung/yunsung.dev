@@ -1,235 +1,78 @@
 ---
-const valuesParagraph =
-  '재현되지 않는 버그일수록 승부욕이 생깁니다. 로그를 뒤지고 커밋을 되짚으며 근본 원인을 찾을 때까지 놓지 않고, <strong style="color:#c8c8c8;font-weight:600;">\'일단 되니까\'를 경계</strong>합니다. 새로운 패턴을 익히고 예전 코드를 다시 보며 \'지금이라면 이렇게 짰을 텐데\'를 되새기는 것이 습관입니다. 같은 작업이 세 번 반복된다면 <strong style="color:#c8c8c8;font-weight:600;">왜 반복되는지부터 파고들어 원인을 없애</strong>고, 머릿속 구상은 직접 <strong style="color:#c8c8c8;font-weight:600;">동작하는 서비스로 만들어 세상에 내놓는 쪽</strong>을 선택합니다.';
+import { getCollection } from 'astro:content';
 
-const experiences = [
-  {
-    period: '2024.05 — 2024.11',
-    role: '프론트엔드 개발자',
-    company: '팀오투 (TeamO2)',
-    type: '정규직',
-    logo: '/images/companies/teamo2.png',
-    projects: [
-      {
-        name: '카모아 — 렌트카 플랫폼',
-        category: '모빌리티',
-        desc: '',
-        tech: ['React', 'TypeScript', 'Redux', 'Webpack5', 'Pug', 'Vanilla JS'],
-        story: [
-          '누적 다운로드 300만 건, 제휴 렌터카사 600여 개 규모의 렌트카 예약 플랫폼 카모아의 유지보수와 신규 기획 개발을 담당했습니다.',
-          'Vanilla JS와 Pug 템플릿으로 운영되던 코드베이스를 React로 점진적으로 전환하는 작업을 맡았습니다. 기본 컴포넌트 10여 개를 시작으로 숙박페스타 필터링, 렌트 상품 할인율 계산까지 <strong>커스텀 훅으로 상태를 관리하고 배럴 파일로 진입점을 단일화</strong>하는 구조를 일관되게 적용했습니다.',
-          '숙박페스타 필터는 이벤트 기간에만 활성화되는 임시 기능이라 언제든 켜고 끌 수 있어야 했습니다. <strong>전용 훅을 분리해 활성화 여부를 플래그 하나로 제어</strong>하고, 조건 변경 시 연관 필터 초기화도 훅 내부에서 처리하도록 정리했습니다. 조건이 바뀌어도 외부 코드를 건드리지 않고 훅과 컴포넌트만 교체하면 되는 구조였습니다.',
-          '기존 시스템 오류도 여러 건 분석해 수정했습니다. 그 중 하나로, 홈 화면에 표시되는 렌트카 가격이 목록에서 봤던 가격과 달라지는 문제가 있었는데, 홈은 Pug, 목록은 React로 구성돼 있어 각자 다른 로직으로 가격을 계산하고 있었습니다. Pug는 React 상태를 참조할 수 없어 별도 구현이 유지되던 상황에서 <strong>비즈니스 정책이 바뀌며 두 화면이 서로 다른 시점의 정책을 참조</strong>하게 된 게 원인이었습니다. 현재 정책을 기준으로 Pug 쪽 계산 로직을 맞추는 방식으로 해결했습니다.',
-        ],
-      },
-    ],
-  },
-  {
-    period: '2022.10 — 2024.05',
-    role: '프론트엔드 개발자',
-    company: 'CNAI',
-    type: '정규직',
-    logo: '/images/companies/cnai.png',
-    projects: [
-      {
-        name: '식단 관리 앱 / 영양사 관리 웹',
-        category: '식품 · 헬스케어',
-        desc: '사용자가 음식을 촬영하면 자사 AI가 영양소를 분석하고, 영양사가 해당 데이터를 기반으로 맞춤 식단을 제안하는 서비스입니다. 앱은 기존에 존재했고, <strong>영양사 관리 웹은 프레임워크 선정부터 설계·구현·유지보수까지 전반적으로 진행</strong>했습니다.',
-        tech: ['Remix', 'React Native', 'TypeScript', 'Jotai', 'Storybook', 'JavaScript'],
-        story: [
-          '영양사 관리 웹이 아예 없는 상태에서 시작했습니다. Remix를 선택하고 아키텍처를 설계해, <strong>1인으로 3개월 만에 10+ 화면을 0→1 구축</strong>했습니다. 저칼로리 맞춤 영양소 분석, 환자 식사 기록 뷰어부터 사용자 설문·관리자 기능까지 <strong>15+ 화면</strong>을 설계·구현했고, 영양사분들이 실제로 쓰는 서비스로 운영됐습니다.',
-          '운영 중 가장 큰 병목은 UI 수정마다 앱 스토어 심사를 다시 받아야 한다는 것이었습니다. <strong>CodePush를 도입</strong>해 네이티브 심사 없이 배포 가능한 구조로 전환했고, 반영 시간을 <strong>3일 → 5분</strong>, 핫픽스 대응 주기를 <strong>주 단위 → 당일</strong>로 단축했습니다.',
-          '<strong>외부 AI 서비스를 자사 AI로 전환</strong>하면서 외부 API 의존성을 제거하고 운영 비용을 줄였습니다. <strong>React Native 기반 Android/iOS 앱</strong>도 설계부터 구축하고 <strong>30+ QA 항목</strong>을 관리하며 유지보수했습니다.',
-          '영양사 관리 웹 필터링이 <strong>5초</strong>씩 걸리는 문제도 있었습니다. Remix action 함수가 form 내 모든 필드 변경을 일괄 처리하는 구조 탓에 검색 로직이 중복 실행되는 게 원인이었습니다. <strong>sessionStorage로 이전 상태를 캐싱</strong>해 중복 실행을 차단했고, <strong>2.5초로 단축</strong>했습니다.',
-          '자식 컴포넌트에서 서버와 직접 통신해야 하는 케이스도 있었습니다. <strong>Remix routes에 경량 API 파일을 분리하고 axios로 요청을 라우팅하는 패턴</strong>을 정립해, 컴포넌트 구조를 손상시키지 않고 해결했습니다.',
-          '앱과 관리 웹을 동시에 개발하며 동일한 컴포넌트가 두 플랫폼에 반복되는 문제도 있었습니다. <strong>Storybook을 도입</strong>해 버튼, 인풋, 카드 등 핵심 컴포넌트를 독립적으로 개발하고 각 상태(기본·비활성·에러 등)를 Story로 정의했습니다. 디자이너와 UI 기준을 문서로 공유할 수 있게 됐고, 스타일 회귀도 시각적으로 바로 확인할 수 있어 <strong>QA 부담이 줄었습니다</strong>.',
-        ],
-      },
-      {
-        name: '키오스크 개발',
-        category: '키오스크',
-        desc: '고객사별 요구사항에 맞는 키오스크 UI를 개발했습니다. 납품마다 유사한 구조가 반복되는 문제를 파악하고, 공통 템플릿을 설계해 재사용 가능한 구조를 갖췄습니다.',
-        tech: ['React', 'TypeScript'],
-        story: [
-          '납품마다 유사한 구조를 처음부터 다시 구현하는 비효율을 해소하기 위해 <strong>CSV 기반 트리 구조 공통 템플릿</strong>을 설계했습니다. CSV 파일에 부모·자식 노드 관계를 정의하면 키오스크 네비게이션 전체에 자동 적용되는 구조로, <strong>고객사별 메뉴 구성이 달라져도 코드 수정 없이 설정만으로 대응</strong> 가능하게 해 납품 속도를 <strong>약 50% 단축</strong>했습니다.',
-          '화면 중앙에서 재생되는 AI 휴먼 안내 영상은 네트워크 의존 없이 기기 내부에 저장하고 <strong>Blob URL로 로드</strong>해, 오프라인 환경의 키오스크에서도 안정적으로 재생되도록 했습니다. 다국어 지원도 <strong>CSV에 언어별 텍스트를 정의</strong>하면 UI 전체에 즉시 반영되는 구조로, 코드 수정 없이 한국어·영어 전환을 지원했습니다.',
-          '고객 시연 현장에서 태블릿이나 스마트폰으로도 동작해야 하는 요구가 있었습니다. 뷰포트 크기에 따라 레이아웃과 터치 인터랙션이 자연스럽게 조정되도록 <strong>반응형 처리</strong>를 적용해, <strong>별도 기기를 준비하지 않고도 현장에서 실기기 시연이 가능</strong>했습니다.',
-        ],
-      },
-      {
-        name: '야구 팬 플랫폼',
-        category: '스포츠',
-        desc: '8만 명 이상이 이용하는 야구 팬 플랫폼의 전체 구조를 파악하고 유지보수를 담당했습니다. 레거시 코드에서 비롯된 데이터 불일치 문제와 이벤트 추첨 로직의 설계 결함을 발견하고 수정했으며, 수동으로 운영되던 멤버십 발급 체계를 자동화했습니다.',
-        tech: ['jQuery', 'Vanilla JS'],
-        story: [
-          '8만 명 이상이 이용하는 플랫폼의 유지보수를 담당하며 여러 구조적 문제를 발견하고 수정했습니다.',
-          '추첨 시스템 개편 요청을 받아 백엔드 구조를 함께 분석했습니다. 유저를 외래키로 갖는 별도 테이블에 당첨 횟수가 누적되고, 그 숫자가 높을수록 추첨에서 불리해지는 레거시 정책이 그대로 남아 있었습니다. 반복 구매 사용자일수록 오히려 불이익을 받는 구조였고, <strong>모든 티켓 구매자를 동등한 조건으로 추첨하는 방식으로 재설계</strong>하고 프론트엔드 API 연동도 함께 업데이트했습니다.',
-          '추첨 명단을 관리자가 백엔드에 수작업으로 입력하던 운영도 바꿨습니다. <strong>엑셀 파일을 업로드하면 데이터를 파싱해 백엔드 서버에 자동 전송</strong>하는 기능을 구현해, <strong>이틀씩 소요되던 명단 관리 작업을 한 시간 안</strong>에 완료할 수 있게 됐습니다. 야구 플랫폼 관계자로부터 직접 긍정적인 피드백을 받았습니다.',
-          '<strong>멤버십 코드를 관리자가 직접 입력하고 수동으로 발급하던 구조도 자동화</strong>했습니다. 가입 시 코드가 자동 생성·발송되도록 전환해 관리자 개입을 없앴습니다.',
-          '아이핀·PASS 인증이 특정 시점부터 실패하는 오류도 있었습니다. 오류 로그와 응답 코드를 분석해 외부 API 측 문제로 범위를 좁혔고, 동작했던 시점과 비교해 <strong>협업사 내부 인증서 만료</strong>가 원인임을 특정한 뒤 협업사에 직접 이슈를 공유해 해결했습니다.',
-          '<strong>티켓 사이트 정보와 플랫폼 데이터가 불일치하던 문제</strong>와 <strong>포인트가 정상 지급되지 않던 로직 오류</strong>도 파악해 수정했습니다. 기존 쿠폰 추첨 외 신규 이벤트 참여 시스템 요구사항을 받아 <strong>JSP 화면 구현 및 API 연동으로 기능을 출시</strong>했습니다.',
-          '<strong>Google Play 정책 위반으로 앱이 스토어에서 내려간 이슈</strong>도 대응했습니다. 개인정보 처리방침 미비가 원인임을 파악하고 수집 항목 명시, UI 접근성 개선, 데이터 보안 설문지 재작성으로 복구했습니다.',
-        ],
-      },
-    ],
-  },
-];
+const projects = await getCollection('projects');
 ---
 
-<section id="values" class="py-16 px-4 sm:px-8 max-w-7xl mx-auto">
-  <div style="border-top: 1px solid #262626;" class="pt-12">
-    <div class="flex flex-col lg:flex-row gap-16">
-      <div class="lg:w-48 shrink-0">
-        <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Values</p>
+<section id="about" class="border-t border-line bg-bg text-ink">
+  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
+    <div class="animate-in">
+      <h2 class="font-serif text-2xl italic md:sticky md:top-24 md:text-3xl">소개</h2>
+    </div>
+
+    <div>
+      <div class="animate-in">
+        <p class="text-2xl font-medium leading-snug tracking-tight md:text-4xl md:leading-[1.25]">
+          React·TypeScript 프론트엔드로 시작해 React Native 앱과 Remix 풀스택 웹까지 경험을 넓혀 왔습니다. 가장 큰 불편을 기준으로 목적을 세우고, AI와 함께 PoC를 빠르게 만들어 직접 써 보며 기능을 더합니다.
+        </p>
+        <p class="mt-6 max-w-2xl text-lg text-muted">
+          AI가 만들고, 저는 방향과 품질을 책임집니다. 맡기기 전에 의도를 확정하고, 반복되는 지시는 스킬로 고정하며, 완료는 AI의 말이 아닌 테스트 결과로 판정합니다.
+        </p>
       </div>
-      <div class="flex-1">
-        <p class="text-base" style="color:#888888; line-height:1.9;" set:html={valuesParagraph} />
-      </div>
+
+      <dl class="mt-16 grid grid-cols-2 gap-x-6 gap-y-10 md:mt-24 md:grid-cols-4">
+        <div class="animate-in" style="--stagger: 40ms">
+          <dt class="count-up font-serif text-6xl leading-none md:text-7xl md:min-h-[4.5rem]" data-target="2" data-suffix="+">1+</dt>
+          <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">년 개발 경력</dd>
+        </div>
+        <div class="animate-in" style="--stagger: 80ms">
+          <dt class="count-up font-serif text-6xl leading-none md:text-7xl md:min-h-[4.5rem]" data-target={projects.length}>1</dt>
+          <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">프로젝트</dd>
+        </div>
+        <div class="animate-in" style="--stagger: 120ms">
+          <dt class="block font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl md:min-h-[4.5rem]">React · React Native</dt>
+          <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">주력 분야</dd>
+        </div>
+        <div class="animate-in" style="--stagger: 160ms">
+          <dt class="block font-display text-2xl font-bold leading-tight tracking-tight md:text-3xl md:min-h-[4.5rem]">Mobility · Healthcare · Kiosk</dt>
+          <dd class="mt-3 border-t border-ink pt-2 text-sm text-muted">도메인 경험</dd>
+        </div>
+      </dl>
+
+      <script>
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const counters = document.querySelectorAll<HTMLElement>('.count-up');
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              io.unobserve(el);
+
+              const target = parseInt(el.dataset.target ?? '0', 10);
+              const suffix = el.dataset.suffix ?? '';
+              if (reduced || target <= 1) {
+                el.textContent = `${target}${suffix}`;
+                continue;
+              }
+
+              const duration = 900;
+              const start = performance.now();
+              function tick(now: number) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.max(1, Math.round(1 + eased * (target - 1)));
+                el.textContent = `${current}${suffix}`;
+                if (progress < 1) requestAnimationFrame(tick);
+              }
+              requestAnimationFrame(tick);
+            }
+          },
+          { threshold: 0.4 }
+        );
+        counters.forEach((el) => io.observe(el));
+      </script>
     </div>
   </div>
 </section>
-
-<section id="about" class="py-16 px-4 sm:px-8 max-w-7xl mx-auto">
-  <div style="border-top: 1px solid #262626;" class="pt-12">
-
-    <div class="flex flex-col lg:flex-row gap-16">
-      <!-- Left label -->
-      <div class="lg:w-48 shrink-0">
-        <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Experience</p>
-      </div>
-
-      <!-- Right content -->
-      <div class="flex-1">
-
-        <!-- Experience -->
-        <div class="mb-20">
-          <p class="text-xs tracking-widest uppercase mb-10" style="color:#555555;">경력</p>
-
-          <div class="space-y-14">
-            {experiences.map((exp, i) => (
-              <div class="animate-in" style={`--stagger: ${i * 80}ms`}>
-
-                <!-- Company header -->
-                <div class="flex items-start gap-4 mb-8">
-                  <div
-                    class="shrink-0 rounded-2xl overflow-hidden flex items-center justify-center"
-                    style="width:72px; height:72px; background:#ffffff; border: 1px solid #e0e0e0;"
-                  >
-                    <img
-                      src={exp.logo}
-                      alt={exp.company}
-                      class="w-full h-full object-contain p-2"
-                    />
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
-                      <p class="text-lg font-bold" style="color:#e8e8e8;">{exp.company}</p>
-                      <p class="text-xs shrink-0" style="color:#555555;">{exp.period}</p>
-                    </div>
-                    <div class="flex items-center gap-2 mt-0.5">
-                      <p class="text-sm" style="color:#888888;">{exp.role}</p>
-                      <span style="color:#333;">·</span>
-                      <p class="text-xs" style="color:#555555;">{exp.type}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Projects -->
-                <div class="space-y-10 sm:pl-[3.75rem]">
-                  {exp.projects.map((proj, pi) => (
-                    <div>
-                      <!-- Project title row -->
-                      <div class="flex flex-wrap items-center gap-2 mb-3">
-                        <span
-                          class="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded"
-                          style="background:#1e1e1e; color:#b5f23d;"
-                        >
-                          {proj.category}
-                        </span>
-                        <p class="text-base font-semibold" style="color:#e8e8e8;">
-                          {proj.name}
-                        </p>
-                      </div>
-
-                      <!-- Desc -->
-                      {proj.desc && <p class="text-sm mb-4" style="color:#666666; line-height:1.8;" set:html={proj.desc} />}
-
-                      <!-- Tech badges -->
-                      <div class="flex flex-wrap gap-1.5 mb-5">
-                        {proj.tech.map((t) => (
-                          <code
-                            class="text-xs px-2 py-0.5 rounded"
-                            style="background:#161616; color:#888888; border: 1px solid #252525; font-family: ui-monospace, monospace;"
-                          >
-                            {t}
-                          </code>
-                        ))}
-                      </div>
-
-                      <!-- Story -->
-                      <div class="space-y-4">
-                        {proj.story.map((paragraph) => (
-                          <p class="text-sm" style="color:#888888; line-height:1.9;" set:html={paragraph} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <!-- Education -->
-        <div class="mb-14">
-          <p class="text-xs tracking-widest uppercase mb-6" style="color:#555555;">학력</p>
-          <div class="flex items-start gap-4">
-            <div class="shrink-0 rounded-2xl overflow-hidden flex items-center justify-center"
-              style="width:72px; height:72px; background:#f5f5f5; border: 1px solid #e0e0e0;">
-              <div class="w-full h-full flex items-center justify-center text-sm font-black" style="color:#1a1a1a;">
-                GSM
-              </div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
-                <p class="text-lg font-bold" style="color:#e8e8e8;">광주소프트웨어 마이스터고등학교</p>
-                <p class="text-xs shrink-0" style="color:#555555;">2020.03 — 2023.01</p>
-              </div>
-              <p class="text-sm mt-0.5" style="color:#888888;">소프트웨어 개발과 · 졸업</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Awards -->
-        <div class="mb-8">
-          <p class="text-xs tracking-widest uppercase mb-4" style="color:#555555;">Awards</p>
-          <div class="flex flex-wrap gap-2">
-            {[
-              '2021 4개교 연합 해커톤 🥇',
-              '2021 교내 올림피아드 🥇',
-              '2021 KDN SW경진대회 🥉',
-              '2020 교내 해커톤 🥈',
-            ].map((item) => (
-              <span class="tag">{item}</span>
-            ))}
-          </div>
-        </div>
-
-        <!-- Certifications -->
-        <div>
-          <p class="text-xs tracking-widest uppercase mb-4" style="color:#555555;">Certifications</p>
-          <div class="flex flex-wrap gap-2">
-            {[
-              '정보처리기능사 (2023)',
-            ].map((item) => (
-              <span class="tag">{item}</span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-

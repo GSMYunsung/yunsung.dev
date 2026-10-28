@@ -1,0 +1,118 @@
+---
+const tabs = [
+  { id: 'architecture', label: 'Architecture' },
+  { id: 'performance', label: 'Performance' },
+  { id: 'automation', label: 'Automation' },
+];
+
+const pipeline = ['정의', '설계', '구현', '검증', '회고'];
+const pipelineSkills = ['clarify-intent', 'design-flow / harness', 'senior-frontend / pr-workflow', 'verify-solution / evidence-audit', 'harness-evolve'];
+
+const performanceRows = [
+  { item: 'ToonCard 리렌더 (Toonify)', before: '새로고침당 3회', after: '1회로 고정' },
+  { item: '영양사 웹 필터링 응답 (CNAI)', before: '5초', after: '2.5초' },
+  { item: '일일 OCR 호출 (Toonify)', before: '약 160회', after: '약 12회 (93%↓)' },
+  { item: '필수로 읽어야 하는 작업 지시 문서 (Toonify)', before: '270줄', after: '168줄 (38%↓)' },
+];
+
+const automationItems = [
+  '"고쳐줘" 같은 요청마다 의도·원인·제약·해법을 되묻지 않고 같은 절차로 확정해 이슈까지 자동 생성 (clarify-intent)',
+  '코드 수정 착수 전 스냅샷을 저장해, 대화 기억 대신 파일 기준으로 정확히 그 작업만 되돌림 (revert-change)',
+  '"개발모드로 실행해줘" 요청 시 네이티브 재빌드 필요 여부를 자동 판단해 dev client·Metro를 복구 (expo-dev-run)',
+  'EAS 빌드 전 주요 화면 흐름 13개를 자동 실행해 스크린샷 포함 보고서 생성 (maestro-test)',
+  '버그 수정 요청마다 리스크 등급을 매겨, Low 등급은 중간 단계를 생략하고 바로 실행 (bugfix-cycle)',
+  '버그 조사와 수정 검토를 리서처·리뷰어 역할의 서브에이전트로 나눠, 사람이 매번 역할을 지정하지 않아도 병행 처리 (toon-researcher · toon-reviewer)',
+  '단계가 멈추거나 권한 오류가 나면 상태 기계 기반으로 하네스를 부분 재실행·복구 (ai-workflow-orchestrator)',
+  '디자인 요청 한마디를 트렌드 수집 → 브리프 → Figma MCP → 코드 반영까지 한 흐름으로 고정 (design-flow)',
+];
+---
+
+<section id="deep-dive" class="border-t border-line bg-bg text-ink">
+  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
+    <div class="animate-in">
+      <h2 class="font-serif text-2xl italic md:sticky md:top-24 md:text-3xl">기술 메모</h2>
+    </div>
+
+    <div>
+      <div role="tablist" aria-label="Topics" class="mb-12 flex flex-wrap gap-x-8 gap-y-2 border-b border-line">
+        {tabs.map((tab, i) => (
+          <button
+            role="tab"
+            id={`tab-${tab.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            aria-controls={`tabpanel-${tab.id}`}
+            class={`tech-tab -mb-px border-b-2 pb-3 font-display text-xl font-bold tracking-tight transition md:text-2xl ${i === 0 ? 'border-accent text-ink' : 'border-transparent text-muted hover:text-ink'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div role="tabpanel" id="tabpanel-architecture" aria-labelledby="tab-architecture" class="tech-panel">
+        <h3 class="text-2xl font-semibold leading-snug tracking-tight md:text-4xl">요청부터 회고까지, 같은 틀로 판단합니다</h3>
+        <p class="mt-4 max-w-xl text-lg text-muted">의도를 확정하고 → 되돌릴 수 있게 만들고 → 근거로 완료를 판정하는 순서를 모든 프로젝트에 동일하게 적용합니다.</p>
+        <ol class="mt-12 flex flex-col gap-3 md:flex-row md:items-center md:gap-0">
+          {pipeline.map((step, i) => (
+            <li class="flex items-center md:flex-1">
+              <span class="font-serif text-3xl italic text-accent">{i + 1}</span>
+              <span class="ml-3 font-medium">{step}</span>
+              {i < pipeline.length - 1 && <span aria-hidden="true" class="mx-4 hidden h-px flex-1 bg-ink md:block"></span>}
+            </li>
+          ))}
+        </ol>
+        <ul class="mt-12 grid gap-x-10 sm:grid-cols-2">
+          {pipelineSkills.map((t) => (
+            <li class="border-t border-line py-3 text-muted">{t}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div role="tabpanel" id="tabpanel-performance" aria-labelledby="tab-performance" class="tech-panel hidden">
+        <h3 class="text-2xl font-semibold leading-snug tracking-tight md:text-4xl">측정 없는 최적화는 하지 않습니다</h3>
+        <p class="mt-4 max-w-xl text-lg text-muted">체감이 아니라 숫자로 병목을 확인한 뒤 고칩니다.</p>
+        <dl class="mt-12">
+          {performanceRows.map((row) => (
+            <div class="grid gap-1 border-t border-line py-4 md:grid-cols-[16rem_1fr] md:gap-6">
+              <dt class="font-medium">{row.item}</dt>
+              <dd class="text-muted">{row.before} → <span class="text-ink">{row.after}</span></dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <div role="tabpanel" id="tabpanel-automation" aria-labelledby="tab-automation" class="tech-panel hidden">
+        <h3 class="text-2xl font-semibold leading-snug tracking-tight md:text-4xl">반복되는 작업은 AI 스킬과 에이전트로 지웠습니다</h3>
+        <p class="mt-4 max-w-xl text-lg text-muted">사람이 매번 같은 지시를 반복하지 않도록, 반복되는 판단과 작업을 스킬로 고정합니다.</p>
+        <ul class="mt-12 space-y-3">
+          {automationItems.map((item) => (
+            <li class="flex gap-3 border-t border-line pt-3">
+              <span class="text-accent">→</span>{item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabButtons = document.querySelectorAll<HTMLButtonElement>('.tech-tab');
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach((b) => {
+        b.setAttribute('aria-selected', 'false');
+        b.classList.remove('border-accent', 'text-ink');
+        b.classList.add('border-transparent', 'text-muted');
+      });
+      btn.setAttribute('aria-selected', 'true');
+      btn.classList.add('border-accent', 'text-ink');
+      btn.classList.remove('border-transparent', 'text-muted');
+
+      document.querySelectorAll<HTMLElement>('.tech-panel').forEach((panel) => {
+        panel.classList.add('hidden');
+      });
+      const target = document.getElementById(btn.getAttribute('aria-controls')!);
+      target?.classList.remove('hidden');
+    });
+  });
+</script>

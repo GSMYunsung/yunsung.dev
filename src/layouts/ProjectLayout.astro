@@ -7,17 +7,14 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, techStack, github, demo, period, category, role, team, tools, collapseDetails } = project.data;
+const { title, description, techStack, github, demo, period, category, role, tools, collapseDetails } = project.data;
 ---
 
 <BaseLayout title={`${title} — yunsung`} description={description}>
-  <article class="max-w-4xl mx-auto px-8 py-16">
+  <article class="mx-auto max-w-4xl px-5 py-16">
 
     <!-- Back -->
-    <a href="/#projects"
-      class="inline-flex items-center gap-2 text-sm mb-12 transition-colors"
-      style="color:#555555;"
-      onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+    <a href="/#projects" class="ulink inline-flex items-center gap-2 text-sm mb-12 text-muted hover:text-ink">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -27,36 +24,29 @@ const { title, description, techStack, github, demo, period, category, role, tea
     <!-- Header -->
     <header class="mb-16">
       <div class="flex items-center gap-3 mb-4">
-        <span class="text-xs font-bold tracking-widest uppercase px-2 py-0.5 rounded"
-          style="background:#1e1e1e; color:#b5f23d;">{category}</span>
-        <span class="text-xs" style="color:#555555;">{period}</span>
+        <span class="text-xs font-bold tracking-widest uppercase px-2 py-0.5 rounded bg-ink text-bg">{category}</span>
+        <span class="font-serif text-lg italic text-muted">{period}</span>
       </div>
 
-      <h1 class="text-4xl md:text-5xl font-black leading-tight mb-4" style="color:#e8e8e8;">{title}</h1>
-      <p class="text-lg leading-relaxed max-w-2xl" style="color:#888888;">{description}</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-4">{title}</h1>
+      <p class="text-lg leading-relaxed max-w-2xl text-muted">{description}</p>
 
       <!-- Meta row -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-10 pt-8" style="border-top: 1px solid #222;">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-10 pt-8 border-t border-line">
         {role && (
           <div>
-            <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Role</p>
-            <p class="text-sm font-medium" style="color:#e8e8e8;">{role}</p>
-          </div>
-        )}
-        {team && (
-          <div>
-            <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Team</p>
-            <p class="text-sm font-medium" style="color:#e8e8e8;">{team}</p>
+            <p class="text-xs tracking-widest uppercase mb-1.5 text-muted">Role</p>
+            <p class="text-sm font-medium">{role}</p>
           </div>
         )}
         <div>
-          <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Period</p>
-          <p class="text-sm font-medium" style="color:#e8e8e8;">{period}</p>
+          <p class="text-xs tracking-widest uppercase mb-1.5 text-muted">Period</p>
+          <p class="text-sm font-medium">{period}</p>
         </div>
         {(tools ?? techStack).length > 0 && (
           <div>
-            <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#444;">Stack</p>
-            <p class="text-sm font-medium" style="color:#e8e8e8;">{(tools ?? techStack).join(', ')}</p>
+            <p class="text-xs tracking-widest uppercase mb-1.5 text-muted">Stack</p>
+            <p class="text-sm font-medium">{(tools ?? techStack).join(', ')}</p>
           </div>
         )}
       </div>
@@ -66,10 +56,7 @@ const { title, description, techStack, github, demo, period, category, role, tea
         <div class="flex flex-wrap items-center gap-3 mt-6">
           {demo && (
             <a href={demo} target="_blank" rel="noopener"
-              class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full transition-all"
-              style="background:#b5f23d; color:#0f0f0f;"
-              onmouseover="this.style.background='#c8ff4d'; this.style.transform='translateY(-1px)'"
-              onmouseout="this.style.background='#b5f23d'; this.style.transform='translateY(0)'">
+              class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full transition-all bg-ink text-bg hover:bg-accent hover:text-accent-ink">
               {demo.includes('apps.apple.com') ? (
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -84,10 +71,7 @@ const { title, description, techStack, github, demo, period, category, role, tea
           )}
           {github && (
             <a href={github} target="_blank" rel="noopener"
-              class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full transition-all"
-              style="border: 1px solid #2e2e2e; color:#888888;"
-              onmouseover="this.style.borderColor='#444'; this.style.color='#e8e8e8'"
-              onmouseout="this.style.borderColor='#2e2e2e'; this.style.color='#888888'">
+              class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full border border-line text-muted hover:border-ink hover:text-ink transition-all">
               <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
               </svg>
@@ -104,11 +88,8 @@ const { title, description, techStack, github, demo, period, category, role, tea
     </div>
 
     <!-- Footer -->
-    <div class="mt-24 pt-8" style="border-top: 1px solid #222;">
-      <a href="/#projects"
-        class="inline-flex items-center gap-2 text-sm transition-colors"
-        style="color:#555555;"
-        onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+    <div class="mt-24 pt-8 border-t border-line">
+      <a href="/#projects" class="ulink inline-flex items-center gap-2 text-sm text-muted hover:text-ink">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -191,19 +172,20 @@ const { title, description, techStack, github, demo, period, category, role, tea
 <style>
   /* Case study content styles */
   .project-content :global(h2) {
+    font-family: var(--font-display);
     font-size: 1.75rem;
     font-weight: 800;
-    color: #e8e8e8;
+    color: var(--color-ink);
     margin-top: 4rem;
     margin-bottom: 1rem;
     padding-top: 2rem;
-    border-top: 1px solid #222;
+    border-top: 1px solid var(--color-line);
   }
 
   .project-content :global(h3) {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #e8e8e8;
+    color: var(--color-ink);
     margin-top: 2.5rem;
     margin-bottom: 0.75rem;
   }
@@ -211,12 +193,12 @@ const { title, description, techStack, github, demo, period, category, role, tea
   .project-content :global(p) {
     font-size: 1rem;
     line-height: 1.8;
-    color: #888888;
+    color: var(--color-muted);
     margin-bottom: 1.25rem;
   }
 
   .project-content :global(strong) {
-    color: #e8e8e8;
+    color: var(--color-ink);
     font-weight: 600;
   }
 
@@ -225,7 +207,7 @@ const { title, description, techStack, github, demo, period, category, role, tea
     border-collapse: collapse;
     margin: 1.5rem 0;
     font-size: 0.875rem;
-    border: 1px solid #262626;
+    border: 1px solid var(--color-line);
     border-radius: 8px;
     overflow: hidden;
   }
@@ -233,28 +215,24 @@ const { title, description, techStack, github, demo, period, category, role, tea
   .project-content :global(th) {
     text-align: left;
     padding: 0.75rem 1rem;
-    background: #1a1a1a;
-    color: #b5f23d;
+    background: var(--color-bg2);
+    color: var(--color-ink);
     font-weight: 700;
     font-size: 0.75rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    border-bottom: 1px solid #262626;
+    border-bottom: 1px solid var(--color-line);
   }
 
   .project-content :global(td) {
     padding: 0.75rem 1rem;
-    color: #aaaaaa;
-    border-bottom: 1px solid #1a1a1a;
+    color: var(--color-muted);
+    border-bottom: 1px solid var(--color-line);
     vertical-align: top;
   }
 
   .project-content :global(tr:last-child td) {
     border-bottom: none;
-  }
-
-  .project-content :global(td:first-child) {
-    color: #888888;
   }
 
   .project-content :global(ul) {
@@ -264,11 +242,11 @@ const { title, description, techStack, github, demo, period, category, role, tea
   }
 
   .project-content :global(ul li) {
-    color: #888888;
+    color: var(--color-muted);
     padding: 0.5rem 0;
     padding-left: 1.25rem;
     position: relative;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid var(--color-line);
     font-size: 0.9375rem;
     line-height: 1.7;
   }
@@ -277,36 +255,37 @@ const { title, description, techStack, github, demo, period, category, role, tea
     content: '→';
     position: absolute;
     left: 0;
-    color: #b5f23d;
+    color: var(--color-accent);
     font-size: 0.75rem;
     top: 0.6rem;
   }
 
   .project-content :global(blockquote) {
-    border-left: 2px solid #b5f23d;
+    border-left: 2px solid var(--color-accent);
     padding: 1rem 1.5rem;
     margin: 2rem 0;
-    background: #161616;
+    background: var(--color-bg2);
     border-radius: 0 6px 6px 0;
   }
 
   .project-content :global(blockquote p) {
-    color: #cccccc;
+    color: var(--color-ink);
     font-style: normal;
     margin: 0;
   }
 
   .project-content :global(code) {
-    background: #1e1e1e;
-    color: #b5f23d;
+    background: var(--color-bg2);
+    color: var(--color-accent-ink);
     padding: 0.15rem 0.45rem;
     border-radius: 4px;
     font-size: 0.85em;
+    border: 1px solid var(--color-line);
   }
 
   .project-content :global(pre) {
-    background: #161616;
-    border: 1px solid #262626;
+    background: var(--color-bg2);
+    border: 1px solid var(--color-line);
     border-radius: 8px;
     padding: 1.25rem;
     overflow-x: auto;
@@ -315,20 +294,21 @@ const { title, description, techStack, github, demo, period, category, role, tea
 
   .project-content :global(pre code) {
     background: none;
-    color: #e8e8e8;
+    color: var(--color-ink);
     padding: 0;
+    border: none;
   }
 
   .project-content :global(hr) {
     border: none;
-    border-top: 1px solid #222;
+    border-top: 1px solid var(--color-line);
     margin: 3rem 0;
   }
 
   .project-content :global(img) {
     width: 100%;
     border-radius: 8px;
-    border: 1px solid #262626;
+    border: 1px solid var(--color-line);
     margin: 1.5rem 0;
   }
 
@@ -341,7 +321,7 @@ const { title, description, techStack, github, demo, period, category, role, tea
     cursor: pointer;
     background: none;
     border: none;
-    border-top: 1px solid #1e1e1e;
+    border-top: 1px solid var(--color-line);
     padding: 0.9rem 0;
     width: 100%;
     text-align: left;
@@ -351,10 +331,10 @@ const { title, description, techStack, github, demo, period, category, role, tea
   .project-content :global(.ts-toggle:first-of-type) {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #222;
+    border-top: 1px solid var(--color-line);
   }
   .project-content :global(.ts-toggle:hover) {
-    background: rgba(255, 255, 255, 0.025);
+    background: var(--color-bg2);
   }
   .project-content :global(.ts-toggle-head) {
     display: flex;
@@ -365,20 +345,22 @@ const { title, description, techStack, github, demo, period, category, role, tea
   .project-content :global(.ts-toggle-title) {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: #e8e8e8;
+    color: var(--color-ink);
     letter-spacing: -0.01em;
     line-height: 1.4;
   }
   .project-content :global(.ts-toggle.open .ts-toggle-title) {
-    color: #b5f23d;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
   }
   .project-content :global(.ts-preview) {
     font-size: 0.8125rem;
-    color: #6b6b6b;
+    color: var(--color-muted);
     line-height: 1.5;
   }
   .project-content :global(.ts-chevron) {
-    color: #555;
+    color: var(--color-muted);
     display: flex;
     align-items: center;
     transition: transform 0.25s ease, color 0.25s ease;
@@ -386,7 +368,7 @@ const { title, description, techStack, github, demo, period, category, role, tea
   }
   .project-content :global(.ts-toggle.open .ts-chevron) {
     transform: rotate(180deg);
-    color: #b5f23d;
+    color: var(--color-ink);
   }
   .project-content :global(.ts-body) {
     overflow: hidden;
@@ -407,8 +389,8 @@ const { title, description, techStack, github, demo, period, category, role, tea
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    background: #1e1e1e;
-    color: #b5f23d;
+    background: var(--color-bg2);
+    color: var(--color-ink);
     padding: 0.25rem 0.75rem;
     border-radius: 4px;
     margin-bottom: 0.75rem;

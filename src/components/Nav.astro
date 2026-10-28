@@ -3,195 +3,126 @@ const pathname = Astro.url.pathname;
 const isBlog = pathname.startsWith('/blog');
 
 const links = [
-  { href: '/#about', label: 'About' },
-  { href: '/#experience', label: 'Experience' },
-  { href: '/#projects', label: 'Projects' },
-  { href: '/#contact', label: 'Contact' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/#about', label: '소개' },
+  { href: '/#experience', label: '경력' },
+  { href: '/#projects', label: '프로젝트' },
+  { href: '/#skills', label: '기술' },
+  { href: '/#approach', label: '접근 방식' },
+  { href: '/#contact', label: '연락' },
 ];
 ---
 
+<!-- 데스크톱: 왼쪽 고정 세로 사이드바 -->
 <header
-  class="fixed top-0 left-0 right-0 z-50 transition-all"
   id="nav"
-  style="background: rgba(15,15,15,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid transparent;"
+  class="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col justify-between border-r border-line bg-bg/90 px-6 py-8 backdrop-blur transition-colors md:flex"
 >
-  <nav class="max-w-7xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between">
-    <div class="flex items-center gap-2 text-sm font-semibold tracking-tight">
-      <a href="/" class="flex items-center gap-2" style="color:#e8e8e8;">
-        <span style="color:#b5f23d;">yunsung</span>
-        <span style="color:#444;">/</span>
-        <span style="color:#888; font-weight:400;">dev</span>
-      </a>
-      {isBlog && (
-        <>
-          <span style="color:#333;">/</span>
-          <span style="color:#666; font-weight:400;">blog</span>
-        </>
-      )}
-    </div>
+  <div>
+    <a href="/#top" class="font-display text-base font-bold tracking-tight">
+      yunsung<span class="text-accent">.</span>
+    </a>
 
     {isBlog ? (
-      <!-- Blog: 포트폴리오 유도 링크 -->
-      <a href="/" class="portfolio-hint" style="text-decoration:none; position:relative; display:inline-block;">
-        <span class="hint-default">포트폴리오 바로가기 ↗</span>
-        <span class="hint-hover">저에 대해 궁금하신가요? ↗</span>
-      </a>
+      <a href="/" class="ulink mt-10 block text-sm font-medium">포트폴리오로 돌아가기 ↗</a>
     ) : (
-      <>
-        <!-- Desktop -->
-        <ul class="hidden md:flex items-center gap-1">
-          {links.map((link) => (
-            <li>
-              {link.label === 'Blog' ? (
-                <a
-                  href={link.href}
-                  class="blog-nav-btn px-3 py-1.5 text-sm rounded-full transition-all"
-                  style="color:#b5f23d; border:1px solid #b5f23d44;"
-                >
-                  {link.label} ↗
-                </a>
-              ) : (
-                <a
-                  href={link.href}
-                  class="nav-link px-3 py-1.5 text-sm rounded transition-colors"
-                  style="color:#888888;"
-                >
-                  {link.label}
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
-
-        <!-- Mobile button -->
-        <button
-          id="mobile-menu-btn"
-          class="md:hidden p-2 rounded transition-colors"
-          style="color:#888888;"
-          aria-label="메뉴"
-        >
-          <svg class="w-5 h-5" id="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-          <svg class="w-5 h-5 hidden" id="close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </>
-    )}
-  </nav>
-
-  <!-- Mobile menu (포트폴리오 페이지에서만) -->
-  {!isBlog && (
-    <div id="mobile-menu" class="hidden md:hidden px-8 pb-4" style="border-top: 1px solid #222;">
-      <ul class="flex flex-col gap-1 pt-3">
+      <ul class="mt-12 flex flex-col gap-1">
         {links.map((link) => (
           <li>
-            {link.label === 'Blog' ? (
-              <a
-                href={link.href}
-                class="block px-3 py-2 text-sm rounded transition-colors"
-                style="color:#b5f23d;"
-              >
-                {link.label} ↗
-              </a>
-            ) : (
-              <a
-                href={link.href}
-                class="block px-3 py-2 text-sm rounded transition-colors"
-                style="color:#888888;"
-              >
-                {link.label}
-              </a>
-            )}
+            <a href={link.href} class="block py-2 text-sm transition text-muted hover:text-ink">
+              {link.label}
+            </a>
           </li>
         ))}
       </ul>
-    </div>
+    )}
+  </div>
+
+  {!isBlog && (
+    <button class="theme-toggle-btn self-start text-sm transition hover:text-accent" aria-label="Toggle theme">
+      Dark
+    </button>
   )}
 </header>
 
-<div class="h-14"></div>
+<!-- 모바일: 상단 가로 바 + 드롭다운 메뉴 -->
+<div id="mobile-bar" class="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between border-b border-line bg-bg/90 px-5 backdrop-blur transition-colors md:hidden">
+  <a href="/#top" class="font-display text-base font-bold tracking-tight">
+    yunsung<span class="text-accent">.</span>
+  </a>
 
-<style>
-  .nav-link:hover { color: #e8e8e8 !important; }
-  .blog-nav-btn:hover { background: #b5f23d18; border-color: #b5f23d88 !important; }
-  #nav.scrolled { border-bottom-color: #222 !important; }
-  @keyframes underline-sweep {
-    0%   { clip-path: inset(0 100% 0 0%); }
-    40%  { clip-path: inset(0 62%  0 0%); }
-    58%  { clip-path: inset(0 0%   0 0%); }
-    72%  { clip-path: inset(0 0%   0 0%); }
-    100% { clip-path: inset(0 0%   0 100%); }
-  }
-  .portfolio-hint { display: inline-block; }
-  .hint-default {
-    position: relative;
-    display: block;
-    font-size: 0.75rem;
-    color: #555;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .hint-default::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #b5f23d;
-    animation: underline-sweep 1.6s ease 1.2s both;
-  }
-  .hint-hover {
-    display: block;
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%) scale(0.8);
-    white-space: nowrap;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #b5f23d;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
-    letter-spacing: -0.01em;
-  }
-  .portfolio-hint:hover .hint-default {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  .portfolio-hint:hover .hint-hover {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.08);
-    text-shadow: 0 0 20px #b5f23d66;
-  }
-</style>
+  {isBlog ? (
+    <a href="/" class="ulink text-sm font-medium">포트폴리오로 돌아가기 ↗</a>
+  ) : (
+    <div class="flex items-center gap-4">
+      <button class="theme-toggle-btn text-sm transition hover:text-accent" aria-label="Toggle theme">
+        Dark
+      </button>
+      <button
+        id="mobile-menu-btn"
+        class="text-sm transition hover:text-accent"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        Menu
+      </button>
+    </div>
+  )}
+</div>
+
+{!isBlog && (
+  <div id="mobile-nav" class="fixed inset-x-0 top-14 z-50 hidden border-b border-line bg-bg/90 px-5 pb-4 backdrop-blur md:hidden">
+    <ul class="flex flex-col gap-1 pt-3">
+      {links.map((link) => (
+        <li>
+          <a href={link.href} class="block py-2 text-sm text-muted">{link.label}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<div class="h-14 md:hidden"></div>
 
 <script>
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
-  const menuIcon = document.getElementById('menu-icon');
-  const closeIcon = document.getElementById('close-icon');
+  const root = document.documentElement;
 
-  btn?.addEventListener('click', () => {
+  function currentTheme() {
+    if (root.dataset.theme === 'dark') return 'dark';
+    if (root.dataset.theme === 'light') return 'light';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  const themeBtns = document.querySelectorAll<HTMLButtonElement>('.theme-toggle-btn');
+
+  function syncLabel() {
+    themeBtns.forEach((btn) => {
+      btn.textContent = currentTheme() === 'dark' ? 'Light' : 'Dark';
+    });
+  }
+  syncLabel();
+
+  themeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      syncLabel();
+    });
+  });
+
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-nav');
+
+  menuBtn?.addEventListener('click', () => {
     const isOpen = !menu?.classList.contains('hidden');
     menu?.classList.toggle('hidden', isOpen);
-    menuIcon?.classList.toggle('hidden', !isOpen);
-    closeIcon?.classList.toggle('hidden', isOpen);
+    menuBtn.setAttribute('aria-expanded', String(!isOpen));
   });
 
   menu?.querySelectorAll('a').forEach((a) => {
     a.addEventListener('click', () => {
       menu.classList.add('hidden');
-      menuIcon?.classList.remove('hidden');
-      closeIcon?.classList.add('hidden');
+      menuBtn?.setAttribute('aria-expanded', 'false');
     });
-  });
-
-  const nav = document.getElementById('nav');
-  window.addEventListener('scroll', () => {
-    nav?.classList.toggle('scrolled', window.scrollY > 10);
   });
 </script>

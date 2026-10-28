@@ -2,44 +2,57 @@
 const groups = [
   {
     label: 'Frontend',
-    skills: ['React', 'TypeScript', 'React Native', 'Remix', 'Next.js', 'Tailwind CSS', 'HTML / CSS'],
+    skills: [
+      { name: 'React', desc: 'CNAI·팀오투 실 서비스에서 주력으로 사용한 프레임워크' },
+      { name: 'TypeScript', desc: '타입으로 런타임 오류를 사전에 차단' },
+      { name: 'React Native', desc: '식단 관리 앱을 iOS·Android 동시 배포' },
+      { name: 'Remix', desc: '영양사 관리 웹을 프레임워크 선정부터 혼자 설계·구축' },
+      { name: 'Next.js', desc: 'CrossStitch 서비스의 기반 프레임워크' },
+      { name: 'Tailwind CSS', desc: '이 포트폴리오를 포함한 대부분의 UI에 적용' },
+    ],
   },
   {
     label: 'State & Tooling',
-    skills: ['Jotai', 'Redux', 'Storybook', 'Webpack5', 'Vite'],
+    skills: [
+      { name: 'Jotai', desc: '식단 앱에서 복잡한 전역 상태를 원자 단위로 관리' },
+      { name: 'Redux', desc: '카모아 플랫폼의 전역 상태 관리에 활용' },
+      { name: 'Storybook', desc: '컴포넌트 단위 독립 개발·문서화로 QA 부담 축소' },
+      { name: 'Webpack5', desc: '카모아 빌드 환경 정비 및 번들 최적화' },
+    ],
   },
   {
     label: 'Etc',
-    skills: ['Git / GitHub', 'jQuery', 'Vanilla JS', 'Pug', 'Figma'],
+    skills: [
+      { name: 'Git · GitHub', desc: '형상 관리 및 협업, PR 기반 워크플로우' },
+      { name: 'jQuery · Vanilla JS', desc: '야구 플랫폼·카모아 레거시 코드베이스 운용' },
+      { name: 'Figma', desc: '서비스 흐름 정리 및 화면 설계' },
+    ],
   },
 ];
 ---
 
-<section id="skills" class="py-16 px-4 sm:px-8 max-w-7xl mx-auto">
-  <div style="border-top: 1px solid #262626;" class="pt-12">
-
-    <div class="flex flex-col lg:flex-row gap-16">
-      <!-- Left label -->
-      <div class="lg:w-48 shrink-0">
-        <p class="text-xs tracking-widest uppercase" style="color:#b5f23d;">Skills</p>
-      </div>
-
-      <!-- Right content -->
-      <div class="flex-1 space-y-10">
-        {groups.map((group, i) => (
-          <div class="flex flex-col sm:flex-row gap-6 animate-in" style={`--stagger: ${i * 80}ms`}>
-            <p class="text-xs tracking-widest uppercase shrink-0 w-32 mt-1" style="color:#555555;">
-              {group.label}
-            </p>
-            <div class="flex flex-wrap gap-2">
-              {group.skills.map((skill) => (
-                <span class="tag">{skill}</span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+<section id="skills" class="border-t border-line bg-bg text-ink">
+  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
+    <div class="animate-in">
+      <h2 class="font-serif text-2xl italic md:sticky md:top-24 md:text-3xl">기술</h2>
     </div>
 
+    <div class="space-y-14">
+      {groups.map((group, i) => (
+        <div class="animate-in" style={`--stagger: ${i * 80}ms`}>
+          <h3 class="border-b-2 border-ink pb-2 font-display text-2xl font-bold tracking-tight md:text-3xl">
+            {group.label}
+          </h3>
+          <dl>
+            {group.skills.map((skill) => (
+              <div class="grid gap-1 border-b border-line py-4 md:grid-cols-[14rem_1fr] md:gap-6">
+                <dt class="font-medium">{skill.name}</dt>
+                <dd class="text-muted">{skill.desc}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
   </div>
 </section>

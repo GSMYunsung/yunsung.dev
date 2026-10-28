@@ -1,0 +1,64 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { AINote } from '../data/aiNotes';
+
+interface Props {
+  note: AINote;
+}
+
+const { note } = Astro.props;
+const { number, title, summary, stat, statCaption, body } = note;
+---
+
+<BaseLayout title={`${title} — AI Note — yunsung`} description={summary}>
+  <article class="max-w-4xl mx-auto px-8 py-16">
+
+    <!-- Back -->
+    <a href="/#ai-note"
+      class="inline-flex items-center gap-2 text-sm mb-12 transition-colors"
+      style="color:#555555;"
+      onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+      </svg>
+      AI Note
+    </a>
+
+    <!-- Header -->
+    <header class="mb-16">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-xs font-bold tracking-widest uppercase px-2 py-0.5 rounded"
+          style="background:#1e1e1e; color:#b5f23d;">AI Note {number}</span>
+      </div>
+
+      <h1 class="text-4xl md:text-5xl font-black leading-tight mb-4" style="color:#e8e8e8;">{title}</h1>
+      <p class="text-lg leading-relaxed max-w-2xl" style="color:#888888;">{summary}</p>
+
+      <!-- Stat -->
+      <div class="mt-10 pt-8" style="border-top: 1px solid #222;">
+        <p class="text-3xl font-black tracking-tight" style="color:#b5f23d;">{stat}</p>
+        <p class="text-sm mt-1" style="color:#666666;">{statCaption}</p>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <div class="space-y-6">
+      {body.map((paragraph) => (
+        <p class="text-base" style="color:#888888; line-height:1.9;" set:html={paragraph} />
+      ))}
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-24 pt-8" style="border-top: 1px solid #222;">
+      <a href="/#ai-note"
+        class="inline-flex items-center gap-2 text-sm transition-colors"
+        style="color:#555555;"
+        onmouseover="this.style.color='#b5f23d'" onmouseout="this.style.color='#555555'">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+        </svg>
+        AI Note로 돌아가기
+      </a>
+    </div>
+  </article>
+</BaseLayout>

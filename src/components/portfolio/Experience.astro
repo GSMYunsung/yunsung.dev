@@ -1,0 +1,94 @@
+---
+const experiences = [
+  {
+    company: '팀오투',
+    role: '프론트엔드 개발자 · 카모아 렌트카 플랫폼',
+    period: '2024.05 — 2024.11',
+    bullets: [
+      '카모아 렌트카 예약 플랫폼 유지보수 및 신규 기획 개발',
+      'React 전환 작업 수행 (Vanilla JS·Pug 레거시, 공통 컴포넌트 10여 개)',
+    ],
+    tech: 'React · TypeScript · Redux · Webpack5 · Pug · Vanilla JS',
+  },
+  {
+    company: 'CNAI',
+    role: '프론트엔드 개발자 · 식단 앱 / 키오스크 / 야구 플랫폼',
+    period: '2022.10 — 2024.05',
+    bullets: [
+      '영양사 관리 웹 신규개발 및 식단 관리 앱 유지보수 \n (Remix, React Native, 자사 AI 영양소 분석 연동)',
+      '키오스크 공통 템플릿 구현 (CSV 기반 트리 구조, 다국어 지원)',
+      '야구 팬 플랫폼 유지보수 (추첨 로직 재설계, 멤버십 자동 발급)',
+    ],
+    tech: 'Remix · React Native · TypeScript · Jotai · Storybook · jQuery',
+  },
+];
+
+const education = [
+  { school: '광주소프트웨어 마이스터고등학교', detail: '소프트웨어 개발과 · 졸업', period: '2020 — 2023' },
+];
+
+const awards = [
+  { title: '2021 4개교 연합 해커톤', detail: '1위' },
+  { title: '2021 교내 올림피아드', detail: '1위' },
+  { title: '2021 KDN SW경진대회', detail: '3위' },
+  { title: '2020 교내 해커톤', detail: '2위' },
+  { title: '정보처리기능사', detail: '2023' },
+];
+---
+
+<section id="experience" class="border-t border-line bg-bg text-ink">
+  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
+    <div class="animate-in">
+      <h2 class="font-serif text-2xl italic md:sticky md:top-24 md:text-3xl">경력</h2>
+    </div>
+
+    <div>
+      <ol>
+        {experiences.map((exp, i) => (
+          <li class="border-t border-ink first:border-t-0 first:pt-0">
+            <div class="grid gap-4 py-10 animate-in md:grid-cols-[1fr_1.5fr] md:gap-10" style={`--stagger: ${i * 80}ms`}>
+              <div>
+                <h3 class="font-display text-4xl font-bold leading-none tracking-tight md:text-5xl">{exp.company}</h3>
+                <p class="mt-3 text-muted">{exp.role}</p>
+                <p class="mt-1 font-serif text-lg italic text-muted">{exp.period}</p>
+              </div>
+              <div>
+                <ul class="space-y-2.5">
+                  {exp.bullets.map((b) => (
+                    <li class="border-b border-line pb-2.5">{b}</li>
+                  ))}
+                </ul>
+                <p class="mt-4 text-sm text-muted">{exp.tech}</p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="mt-16 grid gap-12 border-t-2 border-ink pt-8 md:grid-cols-2">
+        <div>
+          <h3 class="font-serif text-xl italic text-muted">학력</h3>
+          <ul class="mt-3">
+            {education.map((item) => (
+              <li class="flex justify-between gap-4 border-b border-line py-3">
+                <span>{item.school} <span class="text-muted">· {item.detail}</span></span>
+                <span class="shrink-0 text-sm text-muted">{item.period}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-serif text-xl italic text-muted">수상 · 자격</h3>
+          <ul class="mt-3">
+            {awards.map((item) => (
+              <li class="flex justify-between gap-4 border-b border-line py-3">
+                <span>{item.title}</span>
+                <span class="shrink-0 text-sm text-muted">{item.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
