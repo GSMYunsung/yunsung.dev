@@ -28,7 +28,7 @@ const automationItems = [
 ---
 
 <section id="deep-dive" class="border-t border-line bg-bg text-ink">
-  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
+  <div class="mx-auto grid grid-cols-1 max-w-6xl gap-10 px-5 py-24 md:grid-cols-[11rem_1fr] md:gap-12 md:py-36">
     <div class="animate-in">
       <h2 class="font-serif text-2xl italic md:sticky md:top-24 md:text-3xl">기술 메모</h2>
     </div>
@@ -72,7 +72,7 @@ const automationItems = [
         <p class="mt-4 max-w-xl text-lg text-muted">체감이 아니라 숫자로 병목을 확인한 뒤 고칩니다.</p>
         <dl class="mt-12">
           {performanceRows.map((row) => (
-            <div class="grid gap-1 border-t border-line py-4 md:grid-cols-[16rem_1fr] md:gap-6">
+            <div class="grid grid-cols-1 gap-1 border-t border-line py-4 md:grid-cols-[16rem_1fr] md:gap-6">
               <dt class="font-medium">{row.item}</dt>
               <dd class="text-muted">{row.before} → <span class="text-ink">{row.after}</span></dd>
             </div>
