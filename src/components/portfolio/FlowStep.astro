@@ -1,0 +1,67 @@
+---
+interface Props {
+  marker?: 'filled' | 'hollow' | 'highlight' | 'branch';
+  title: string;
+  subtitle?: string;
+  note?: string;
+  noteTone?: 'accent' | 'muted';
+  desc: string;
+  indent?: boolean;
+}
+
+const { marker = 'filled', title, subtitle, note, noteTone = 'accent', desc, indent = false } = Astro.props;
+
+const markerMap = {
+  filled: { glyph: '●', class: 'text-accent text-[0.6rem]' },
+  hollow: { glyph: '○', class: 'text-muted text-[0.6rem]' },
+  highlight: { glyph: '✦', class: 'text-accent text-base' },
+  branch: { glyph: '↳', class: 'text-accent text-base' },
+};
+const { glyph, class: markerClass } = markerMap[marker];
+---
+
+<li class={`relative ${indent ? 'ml-6 pl-8 md:ml-10' : 'pl-8'}`}>
+  <span aria-hidden="true" class={`absolute left-0 top-1.5 font-serif leading-none ${markerClass}`}>{glyph}</span>
+  <button type="button" aria-expanded="false" class="flow-step group w-full text-left">
+    <span class="block font-medium transition group-hover:text-accent">{title}</span>
+    {subtitle && <span class="mt-0.5 block text-sm text-muted">{subtitle}</span>}
+    {note && <span class={`mt-0.5 block font-serif text-sm italic ${noteTone === 'accent' ? 'text-accent' : 'text-muted'}`}>{note}</span>}
+    <span class="flow-desc block text-sm text-muted">{desc}</span>
+  </button>
+</li>
+
+<style>
+  .flow-desc {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.2s ease,
+      margin-top 0.3s ease;
+  }
+
+  .flow-step.is-open .flow-desc {
+    max-height: 12rem;
+    opacity: 1;
+    margin-top: 0.5rem;
+  }
+
+  @media (hover: hover) {
+    .flow-step:hover .flow-desc {
+      max-height: 12rem;
+      opacity: 1;
+      margin-top: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.flow-step');
+    if (!btn) return;
+    const open = btn.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+</script>

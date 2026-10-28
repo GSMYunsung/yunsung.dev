@@ -1,17 +1,10 @@
 ---
+import FlowStep from './FlowStep.astro';
+
 const tabs = [
   { id: 'architecture', label: 'Architecture' },
   { id: 'performance', label: 'Performance' },
   { id: 'automation', label: 'Automation' },
-];
-
-const pipeline = ['정의', '설계', '구현', '검증', '회고'];
-const pipelineDetails = [
-  { desc: '요청 뒤의 진짜 목표를 의도→원인→제약→해법 순으로 먼저 확정합니다.', skills: 'clarify-intent · bugfix-cycle' },
-  { desc: '방향성을 정하고 구체화한 뒤 모션까지 설계합니다.', skills: 'design-flow · harness' },
-  { desc: '이슈·브랜치·Draft PR·커밋·진행 댓글로 전 과정을 추적합니다.', skills: 'senior-frontend · pr-workflow' },
-  { desc: '정적 검사→단위→통합→E2E 순으로 확인하고, AI의 완료 선언은 다시 감사합니다.', skills: 'verify-solution · evidence-audit' },
-  { desc: '머지·릴리스 후 결과가 아쉬우면 피드백을 일반화해 에이전트와 스킬을 고칩니다.', skills: 'harness-evolve' },
 ];
 
 const performanceRows = [
@@ -57,23 +50,62 @@ const automationItems = [
       <div role="tabpanel" id="tabpanel-architecture" aria-labelledby="tab-architecture" class="tech-panel">
         <h3 class="text-2xl font-semibold leading-snug tracking-tight md:text-4xl">요청부터 회고까지, 같은 틀로 판단합니다</h3>
         <p class="mt-4 max-w-xl text-lg text-muted">의도를 확정하고 → 되돌릴 수 있게 만들고 → 근거로 완료를 판정하는 순서를 모든 프로젝트에 동일하게 적용합니다.</p>
-        <ol class="mt-12 flex flex-col gap-3 md:flex-row md:items-center md:gap-0">
-          {pipeline.map((step, i) => (
-            <li class="flex items-center md:flex-1">
-              <span class="font-serif text-3xl italic text-accent">{i + 1}</span>
-              <span class="ml-3 font-medium">{step}</span>
-              {i < pipeline.length - 1 && <span aria-hidden="true" class="mx-4 hidden h-px flex-1 bg-ink md:block"></span>}
-            </li>
-          ))}
+        <p class="mt-10 text-xs tracking-wide text-muted">● 스킬로 처리 &nbsp;·&nbsp; ○ 스킬 없음, 사람의 판단 &nbsp;·&nbsp; ✦ 핵심 차별점</p>
+        <ol class="relative mt-6 space-y-7">
+          <FlowStep
+            marker="hollow"
+            title="사용자 문제 발굴"
+            subtitle="스킬 없음 · 무엇을 만들지 고르는 단계"
+            desc="AI가 대신 판단할 수 없는 단계입니다. 어떤 문제를 지금 풀어야 하는지는 제가 직접 정합니다."
+          />
+          <FlowStep title="요청 수신" desc="요청을 받는 시점입니다. 해결책이 아니라 그 뒤의 진짜 목표부터 확인하는 절차가 여기서 시작됩니다." />
+          <FlowStep
+            title="착수 전 스냅샷"
+            subtitle="revert-change · chaengkim"
+            desc="코드를 고치기 전에 현재 상태를 저장해 둡니다. 대화 기억이 아니라 파일 기준으로, 나중에 꼭 그 작업만 정확히 되돌릴 수 있게 하기 위해서입니다."
+          />
+          <FlowStep
+            title="의도 확정 + GitHub 이슈"
+            subtitle="clarify-intent · bugfix-cycle 위험 등급"
+            desc="요청 뒤의 진짜 목표를 의도→원인→제약→해법 순으로 먼저 확정하고, 합의된 내용을 GitHub 이슈로 남깁니다. 버그 수정은 위험 등급을 매겨 낮은 위험은 중간 단계를 생략합니다."
+          />
+          <li class="relative pl-8">
+            <span aria-hidden="true" class="absolute left-0 top-1 font-serif leading-none text-muted">?</span>
+            <span class="font-serif italic text-muted">디자인이 필요한 작업인가요?</span>
+            <span class="mt-0.5 block text-sm text-muted">아니오 → 바로 구현으로 · 예 → 아래 디자인 단계를 거침</span>
+          </li>
+          <FlowStep
+            marker="branch"
+            indent
+            title="디자인: 방향 → 구체화 → 모션"
+            subtitle="design-taste-frontend · frontend-design · design-flow · impeccable · animate"
+            desc="트렌드 수집 → 방향 브리프 → Figma 구체화 → 모션 설계까지 한 흐름으로 고정합니다. 디자인 요청 한마디로 전체 파이프라인이 돌아갑니다."
+          />
+          <FlowStep
+            title="구현 + Draft PR"
+            subtitle="senior-frontend · pr-workflow · expo-dev-run"
+            desc="이슈·브랜치·Draft PR·커밋·진행 댓글로 전 과정을 추적합니다. 네이티브 재빌드가 필요하면 자동으로 dev client·Metro를 복구합니다."
+          />
+          <FlowStep
+            marker="highlight"
+            title="검증: 근거로 완료 판정"
+            subtitle="verify-solution · maestro-test (화면 13개) · evidence-audit"
+            note="↺ 반려 시 구현으로 되돌아갑니다"
+            desc={'정적 검사→단위→통합→E2E 순으로 확인합니다. EAS 빌드 전에는 주요 화면 흐름 13개를 자동 실행해 스크린샷 리포트를 생성합니다. AI의 "완료했습니다" 선언은 QA 캡처 누락·종료 코드 오류·소스 해시 불일치·반복 차단 의심 네 가지 신호로 다시 감사합니다.'}
+          />
+          <FlowStep
+            title="머지 · 릴리스"
+            subtitle="pr-workflow"
+            note="출시 후 지표 측정은 아직 다루지 않습니다"
+            noteTone="muted"
+            desc="검증을 통과한 변경만 사용자 승인을 받은 뒤 머지합니다. 머지 후에는 로컬 main을 원격과 동기화합니다."
+          />
+          <FlowStep
+            title="회고: 작업 체계 개선"
+            subtitle="harness-evolve로 스킬 · 에이전트 수정"
+            desc="머지·릴리스 후 결과가 아쉬우면 피드백을 일반화해 에이전트와 스킬 자체를 고칩니다. 같은 실수를 반복하지 않도록 프로세스를 스스로 개선합니다."
+          />
         </ol>
-        <dl class="mt-12">
-          {pipelineDetails.map((d, i) => (
-            <div class="grid grid-cols-1 gap-1 border-t border-line py-4 md:grid-cols-[7rem_1fr] md:gap-6">
-              <dt class="font-serif text-lg italic text-muted">{pipeline[i]}</dt>
-              <dd class="text-muted">{d.desc} <span class="text-ink">({d.skills})</span></dd>
-            </div>
-          ))}
-        </dl>
         <div class="mt-8 rounded-r-md border-l-2 border-accent bg-bg2 px-6 py-4">
           <p class="text-ink">AI의 "완료했습니다"는 그대로 믿지 않습니다. QA 캡처 누락, 종료 코드 오류, 소스 해시 불일치, 반복 차단 의심 — 네 가지 신호 중 하나라도 걸리면 완료 선언과 별도로 승인·반려 근거를 다시 감사합니다.</p>
         </div>
