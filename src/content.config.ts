@@ -30,6 +30,8 @@ const projects = defineCollection({
     category: z.string().default('사이드'),
     role: z.string().optional(),
     team: z.string().optional(),
+    problem: z.string().optional(),
+    solution: z.string().optional(),
     tools: z.array(z.string()).optional(),
     links: z.object({
       github: z.string().optional(),
