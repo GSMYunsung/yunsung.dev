@@ -93,26 +93,6 @@
     color: var(--color-accent-ink);
   }
 
-  .btn-ghost {
-    @apply inline-flex items-center gap-2 text-sm font-medium transition-all;
-    color: var(--color-ink);
-  }
-
-  .card {
-    background: var(--color-bg2);
-    border: 1px solid var(--color-line);
-    border-radius: 8px;
-    transition: border-color 0.2s;
-  }
-
-  .card:hover {
-    border-color: var(--color-accent);
-  }
-
-  .divider {
-    border-color: var(--color-line);
-  }
-
   /* 밑줄이 호버 시 사라지는 링크 (reference .ulink) */
   .ulink {
     background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
@@ -125,14 +105,6 @@
 }
 
 @layer utilities {
-  .accent-text {
-    color: var(--color-accent);
-  }
-
-  .muted-text {
-    color: var(--color-muted);
-  }
-
   .prose-custom {
     @apply prose max-w-none;
     --tw-prose-body: var(--color-muted);
@@ -182,25 +154,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .squiggle path { animation: none; stroke-dashoffset: 0; }
-}
-
-/* 작업 화면 marquee */
-.marquee-track {
-  width: max-content;
-  display: flex;
-  animation: marquee 70s linear infinite;
-}
-
-.marquee-viewport {
-  overflow-x: auto;
-}
-
-@keyframes marquee {
-  to { transform: translateX(-50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
 }
 
 /* 프로젝트 아코디언 +/× 아이콘 */

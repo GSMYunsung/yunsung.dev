@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, techStack, github, demo, period, category, role, team, tools, collapseDetails } = project.data;
+const { title, description, techStack, github, demo, period, category, role, tools, collapseDetails } = project.data;
 ---
 
 <BaseLayout title={`${title} — yunsung`} description={description}>
@@ -37,12 +37,6 @@ const { title, description, techStack, github, demo, period, category, role, tea
           <div>
             <p class="text-xs tracking-widest uppercase mb-1.5 text-muted">Role</p>
             <p class="text-sm font-medium">{role}</p>
-          </div>
-        )}
-        {team && (
-          <div>
-            <p class="text-xs tracking-widest uppercase mb-1.5 text-muted">Team</p>
-            <p class="text-sm font-medium">{team}</p>
           </div>
         )}
         <div>
