@@ -48,7 +48,7 @@
     font-family: var(--font-sans);
     font-size: 17px;
     width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
@@ -60,7 +60,7 @@
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    overflow-x: clip;
     transition:
       background-color 0.2s ease,
       color 0.2s ease;
