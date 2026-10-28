@@ -7,9 +7,10 @@ interface Props {
   noteTone?: 'accent' | 'muted';
   desc: string;
   indent?: boolean;
+  arrow?: boolean;
 }
 
-const { marker = 'filled', title, subtitle, note, noteTone = 'accent', desc, indent = false } = Astro.props;
+const { marker = 'filled', title, subtitle, note, noteTone = 'accent', desc, indent = false, arrow = true } = Astro.props;
 
 const markerMap = {
   filled: { glyph: '●', class: 'text-accent text-[0.6rem]' },
@@ -20,7 +21,7 @@ const markerMap = {
 const { glyph, class: markerClass } = markerMap[marker];
 ---
 
-<li class={`relative ${indent ? 'ml-6 pl-8 md:ml-10' : 'pl-8'}`}>
+<div class={`relative ${indent ? 'ml-6 pl-8 md:ml-10' : 'pl-8'}`}>
   <span aria-hidden="true" class={`absolute left-0 top-1.5 font-serif leading-none ${markerClass}`}>{glyph}</span>
   <button type="button" aria-expanded="false" class="flow-step group w-full text-left">
     <span class="block font-medium transition group-hover:text-accent">{title}</span>
@@ -28,7 +29,10 @@ const { glyph, class: markerClass } = markerMap[marker];
     {note && <span class={`mt-0.5 block font-serif text-sm italic ${noteTone === 'accent' ? 'text-accent' : 'text-muted'}`}>{note}</span>}
     <span class="flow-desc block text-sm text-muted">{desc}</span>
   </button>
-</li>
+  {arrow && (
+    <span aria-hidden="true" class="-ml-8 mt-1.5 block w-8 text-center text-sm leading-none text-line">↓</span>
+  )}
+</div>
 
 <style>
   .flow-desc {
