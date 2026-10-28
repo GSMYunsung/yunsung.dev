@@ -33,6 +33,7 @@ const projects = defineCollection({
     problem: z.string().optional(),
     reasoning: z.string().optional(),
     solution: z.string().optional(),
+    contribution: z.array(z.string()).optional(),
     tools: z.array(z.string()).optional(),
     links: z.object({
       github: z.string().optional(),

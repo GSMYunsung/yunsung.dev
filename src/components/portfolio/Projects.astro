@@ -15,7 +15,7 @@ const allProjects = (await getCollection('projects')).sort((a, b) => a.data.orde
 
       <ul class="border-t-2 border-ink">
         {allProjects.map((project, i) => {
-          const { title, period, description, techStack, role, problem, reasoning, solution } = project.data;
+          const { title, period, description, techStack, role, problem, reasoning, solution, contribution } = project.data;
           const panelId = `panel-${project.id}`;
           return (
             <li class="border-b border-line">
@@ -61,6 +61,18 @@ const allProjects = (await getCollection('projects')).sort((a, b) => a.data.orde
                       <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
                         <h4 class="font-serif text-lg italic text-muted">Solution</h4>
                         <div class="leading-relaxed">{solution}</div>
+                      </div>
+                    )}
+                    {contribution && contribution.length > 0 && (
+                      <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
+                        <h4 class="font-serif text-lg italic text-muted">Contribution</h4>
+                        <ul class="space-y-1.5">
+                          {contribution.map((item) => (
+                            <li class="flex gap-3">
+                              <span class="text-accent">→</span>{item}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                     <div class="grid gap-1 md:grid-cols-[7rem_1fr] md:gap-6">
