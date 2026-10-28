@@ -58,7 +58,7 @@ const { projects } = Astro.props;
                   <ul class="space-y-1.5">
                     {contribution.map((item) => (
                       <li class="flex gap-3">
-                        <span class="text-accent">→</span>{item}
+                        <span class="text-accent">→</span><span class="min-w-0">{item}</span>
                       </li>
                     ))}
                   </ul>
