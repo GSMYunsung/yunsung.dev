@@ -18,14 +18,14 @@ const personalProjects = allProjects.filter((p) => !companyCategories.includes(p
       <p class="mb-8 text-muted">최신순 · 항목을 눌러 문제와 해결 과정을 확인하세요.</p>
 
       <div class="mb-16">
-        <h3 class="mb-6 border-b-2 border-ink pb-2 font-display text-2xl font-bold tracking-tight md:text-3xl">
+        <h3 class="mb-6 border-ink pb-2 font-display text-2xl font-bold tracking-tight md:text-3xl">
           회사 프로젝트
         </h3>
         <ProjectAccordionList projects={companyProjects} />
       </div>
 
       <div>
-        <h3 class="mb-6 border-b-2 border-ink pb-2 font-display text-2xl font-bold tracking-tight md:text-3xl">
+        <h3 class="mb-6 border-ink pb-2 font-display text-2xl font-bold tracking-tight md:text-3xl">
           개인 프로젝트
         </h3>
         <ProjectAccordionList projects={personalProjects} />
